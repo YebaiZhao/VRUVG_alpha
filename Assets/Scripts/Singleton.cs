@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿/*A template class for all child class that wants to have 
+only one instance*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

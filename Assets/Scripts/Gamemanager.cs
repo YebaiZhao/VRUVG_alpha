@@ -1,17 +1,19 @@
-﻿using System.Collections;
+﻿/*Managing game data such as time */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gamemanager : Singleton<Gamemanager> {
+public class GameManager : Singleton<GameManager> {
 	private float _timeRemaining;
+	public float maxGameTime = 1 * 60; // In seconds.
 
-	public float TimeRemaining 
+
+	public float TimeRemaining //the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
 		set { _timeRemaining = value; }
 	}
-
-	public float maxGameTime = 5 * 60; // In seconds.
+		
 	// Use this for initialization
 	void Start () {
 		TimeRemaining = maxGameTime;
