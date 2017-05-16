@@ -8,6 +8,8 @@ public class UpdateUI : MonoBehaviour {
 
 	[SerializeField]
 	private Text timerlabel ;
+	[SerializeField]
+	private Text thumbsticklabel;
 	// Use this for initialization
 	void Start () {
 		
@@ -16,8 +18,15 @@ public class UpdateUI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);
+		thumbsticklabel.text = GameManager.Instance.thumbstickStatus;
 	}
+
+
+
+
+
 	private string FormatTime(float timeInSeconds){
 		return string.Format("{0}:{1:00}", Mathf.FloorToInt(timeInSeconds/60), Mathf.FloorToInt(timeInSeconds % 60));
 	}
+
 }
