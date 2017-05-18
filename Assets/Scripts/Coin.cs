@@ -17,7 +17,7 @@ public class Coin : MonoBehaviour {
 	private IEnumerator Spin(){
 		while(true){
 			//transform.Rotate (Vector3.up, 360 * rotateSpeed * Time.deltaTime);
-			transform.LookAt(camera);
+			transform.LookAt(camera); //look towards the player
 			yield return 0;
 		}
 	}
