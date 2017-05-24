@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager> {
 	private float _timeRemaining;
-	public float maxGameTime = 1 * 60; // In seconds.
+	public float maxGameTime = 5 * 60; // In seconds.
 	public string thumbstickStatus = "null";
 
 	public float TimeRemaining //the time remaining from the begining of the game in sec.
