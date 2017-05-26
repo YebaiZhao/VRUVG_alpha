@@ -10,15 +10,21 @@ public class ArrowMovement : MonoBehaviour {
 	private float startingY;
 	private bool isMovingUp = true;
 	private float roateNextPeriod = 0;
-
+	private ArrayList moveList = new ArrayList (4);
+	private int moveListPointer = 0;
 	// Use this for initialization
 	void Start () {
 		startingY = transform.position.y;
+		moveList.Add (Vector3.left);
+		moveList.Add (Vector3.back);
+		moveList.Add (Vector3.forward);
+		moveList.Add (Vector3.right);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		Float ();
+		//ArrowMove ();
 		ArrowRoate ();
 		//transform.LookAt(lookTarget); //look towards the player
 	}
@@ -47,5 +53,15 @@ public class ArrowMovement : MonoBehaviour {
 
 		}
 
+	}
+	public void ArrowMove(){
+		//if (Time.realtimeSinceStartup > roateNextPeriod) {
+		//	transform.Translate (moveList[moveListPointer], Space.Self);
+		//	if (moveListPointer < 3) {
+		//		moveListPointer++;
+		//	} else {
+		//		moveListPointer = 0;
+		//	}
+		//}
 	}
 }
