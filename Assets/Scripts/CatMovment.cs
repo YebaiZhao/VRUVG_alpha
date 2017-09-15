@@ -1,10 +1,11 @@
-﻿//Yebai
-//This is the script used to move the arrow and let it float a little
+﻿//Yebai Zhao
+//This script is used to move the cat in a sequence way
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArrowMovement : MonoBehaviour {
+public class CatMovment : MonoBehaviour {
+
 	[SerializeField] private float floatSpeed = 1.0f; // In cycles (up and down) per second
 	[SerializeField] private float movementDistance = 0.03f; // The maximum distance the coin can move up and down
 	[SerializeField] float roatePeriod = 5.0f;
@@ -22,10 +23,10 @@ public class ArrowMovement : MonoBehaviour {
 		moveList.Add (Vector3.forward);
 		moveList.Add (Vector3.right);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		Float ();
+		//Float ();
 		//ArrowMove ();
 		ArrowRoate ();
 		//transform.LookAt(lookTarget); //look towards the player
