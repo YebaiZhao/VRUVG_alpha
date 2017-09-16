@@ -30,6 +30,7 @@ public class CatMovment : MonoBehaviour {
 		//ArrowMove ();
 		ArrowRoate ();
 		//transform.LookAt(lookTarget); //look towards the player
+
 	}
 	private void Float()
 	{

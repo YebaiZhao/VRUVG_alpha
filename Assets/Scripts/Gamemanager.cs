@@ -1,4 +1,5 @@
-﻿/*Managing game data such as time */
+﻿//Yebai Zhao
+/*Managing game data such as time */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,7 @@ public class GameManager : Singleton<GameManager> {
 	private float _timeRemaining;
 	public float maxGameTime = 5 * 60; // In seconds.
 	public string thumbstickStatus = "null";
-
+	public string buttonStatus = "null";
 	public float TimeRemaining //the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
@@ -26,6 +27,7 @@ public class GameManager : Singleton<GameManager> {
 			Application.Quit();
 		}
 		thumbstickStatus = GetThumbstickStatus();
+		buttonStatus = GetButtonStatus ();
 	}
 	/// <End of the Update>
 	/// //////////////////////////////////////////////////////////////////////
@@ -49,6 +51,13 @@ public class GameManager : Singleton<GameManager> {
 		if(OVRInput.Get (OVRInput.Button.SecondaryThumbstickLeft)) { status="R_left"; }
 		if(OVRInput.Get (OVRInput.Button.SecondaryThumbstickRight)) { status="R_right"; }
 		if(OVRInput.Get (OVRInput.Button.SecondaryThumbstickUp)) { status="R_up"; }
+		return status;
+	}
+
+	private string GetButtonStatus(){/// Currently both index fingers will trigger the keyword
+		string status = "null";
+		if (OVRInput.Get (OVRInput.Button.PrimaryIndexTrigger)) {status = "Index_Triggered";}
+		if (OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)) {status = "Index_Triggered";}
 		return status;
 	}
 		

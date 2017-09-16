@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class UpdateUI : MonoBehaviour {
 
 	[SerializeField] private Text timerlabel ;
-	[SerializeField] private Text thumbsticklabel;
+	[SerializeField] private Text controllerlabel;
 	[SerializeField] private Text fpslabel;
 	[SerializeField] float fpsMeasurePeriod = 2.0f;
 
@@ -20,7 +20,7 @@ public class UpdateUI : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);
-		thumbsticklabel.text = GameManager.Instance.thumbstickStatus;
+		controllerlabel.text = GameManager.Instance.buttonStatus;
 
 		if (Time.realtimeSinceStartup > m_FpsNextPeriod){
 			m_FpsNextPeriod += fpsMeasurePeriod;

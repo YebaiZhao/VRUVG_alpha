@@ -1,5 +1,5 @@
 ﻿//Yebai Zhao 9/14/17
-
+//Manage the status of the cat
 
 using System.Collections;
 using System.Collections.Generic;
@@ -23,6 +23,14 @@ public class yb_catScript : MonoBehaviour {
 			timeNextPeriod += StateMachineChangeTime;
 			anim.SetFloat("Blend", Random.Range(0f ,3f));
 
+		}
+
+
+		if (GameManager.Instance.buttonStatus == "Index_Triggered") {
+			anim.SetBool ("makeMeow", true);
+		}
+		else{
+			anim.SetBool ("makeMeow", false);
 		}
 
 
