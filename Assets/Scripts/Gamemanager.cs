@@ -9,6 +9,7 @@ public class GameManager : Singleton<GameManager> {
 	public float maxGameTime = 5 * 60; // In seconds.
 	public string thumbstickStatus = "null";
 	public string buttonStatus = "null";
+	public bool laserHit = true;// if the laser in controller hit the cat
 	public float TimeRemaining //the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
@@ -18,6 +19,7 @@ public class GameManager : Singleton<GameManager> {
 	// Use this for initialization
 	void Start () {
 		TimeRemaining = maxGameTime;
+
 	}
 	
 	// Update is called once per frame
