@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UpdateUI : MonoBehaviour {
+public class UpdateHandUI : MonoBehaviour {
 
 	[SerializeField] private Text timerlabel ;
 	[SerializeField] private Text controllerlabel;
