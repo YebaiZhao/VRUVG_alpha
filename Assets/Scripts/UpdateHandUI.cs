@@ -9,6 +9,8 @@ public class UpdateHandUI : MonoBehaviour {
 	[SerializeField] private Text timerlabel ;
 	[SerializeField] private Text controllerlabel;
 	[SerializeField] private Text fpslabel;
+	[SerializeField] private Text dataA;
+	[SerializeField] private Text dataB;
 	[SerializeField] float fpsMeasurePeriod = 2.0f;
 
 	private float m_FpsNextPeriod = 0;
@@ -19,10 +21,10 @@ public class UpdateHandUI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);
-		controllerlabel.text = GameManager.Instance.buttonStatus;
+		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);//time
+		controllerlabel.text = GameManager.Instance.buttonStatus;//button
 
-		if (Time.realtimeSinceStartup > m_FpsNextPeriod){
+		if (Time.realtimeSinceStartup > m_FpsNextPeriod){//fps
 			m_FpsNextPeriod += fpsMeasurePeriod;
 			fpslabel.text = string.Format("{0:F1} FPS", OVRPlugin.GetAppFramerate());
 		}

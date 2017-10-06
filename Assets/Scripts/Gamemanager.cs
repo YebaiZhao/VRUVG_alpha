@@ -1,5 +1,8 @@
 ﻿//Yebai Zhao
-/*Managing game data such as time */
+/*
+ * Managing game data such as time
+ * Getting Controller input
+*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

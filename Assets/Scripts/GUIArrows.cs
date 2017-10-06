@@ -1,23 +1,25 @@
+/*Yebai
+ * This script controls the behavior of the GUI guidance arrow */
 using UnityEngine;
-
 namespace VRStandardAssets.Utils
 { 
     // This class fades in and out arrows which indicate to
     // the player which direction they should be facing.
-    public class GUIArrows : MonoBehaviour
+	public class GUIArrows : MonoBehaviour
     {
-        [SerializeField] private float m_FadeDuration = 0.5f;       // How long it takes for the arrows to appear and disappear.
-        [SerializeField] private float m_ShowAngle = 60f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
-        [SerializeField] private Transform m_DesiredDirection;      // Indicates which direction the player should be facing (uses world space forward if null).
+		public float angleDelta;
+
+        [SerializeField] private float m_FadeDuration = 0.1f;       // How long it takes for the arrows to appear and disappear.
+        [SerializeField] private float m_ShowAngle = 30f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
+		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
 
 
         private float m_CurrentAlpha;                               // The alpha the arrows currently have.
-        private float m_TargetAlpha;                                // The alpha the arrows are fading towards.
+        private float[] m_TargetAlpha;                              // The alpha the arrows are fading towards.
         private float m_FadeSpeed;                                  // How much the alpha should change per second (calculated from the fade duration).
-
-
+		private int angleSign;
         private const string k_MaterialPropertyName = "_Alpha";     // The name of the alpha property on the shader being used to fade the arrows.
 
 
@@ -29,31 +31,69 @@ namespace VRStandardAssets.Utils
 
 
         private void Update()
-        {
-            // The vector in which the player should be facing is the forward direction of the transform specified or world space.
-            Vector3 desiredForward = m_DesiredDirection == null ? Vector3.forward : m_DesiredDirection.forward;
+        {	//Set the arrow ring to aling with camera.
+			//transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
+			transform.position = m_Camera.position;
+			transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);
+			// The vector in which the player should be facing towards the cat
+			Vector3 directAim = m_DesiredLocation.transform.position - m_Camera.transform.position;
+			Vector3 desiredForward = m_DesiredLocation == null ? Vector3.forward : Vector3.ProjectOnPlane(directAim, Vector3.up).normalized;
 
             // The forward vector of the camera as it would be on a flat plane.
             Vector3 flatCamForward = Vector3.ProjectOnPlane(m_Camera.forward, Vector3.up).normalized;
 
             // The difference angle between the desired facing and the current facing of the player.
-            float angleDelta = Vector3.Angle (desiredForward, flatCamForward);
+			angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1;
+			angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
 
-            // If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
-            m_TargetAlpha = angleDelta > m_ShowAngle ? 1f : 0f;
+			Debug.Log (Vector3.Cross(desiredForward, flatCamForward).y );//////////////??????????
 
-            // Increment the current alpha value towards the now chosen target alpha and the calculated speed.
-            m_CurrentAlpha = Mathf.MoveTowards (m_CurrentAlpha, m_TargetAlpha, m_FadeSpeed * Time.deltaTime);
+	            // If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
+			if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) {
+					m_TargetAlpha = new float[]{0f, 0f};
+				} else if (angleDelta < -1*m_ShowAngle) {
+					m_TargetAlpha = new float[]{1f, 0f};
+				} else if (m_ShowAngle < angleDelta) {
+					m_TargetAlpha = new float[]{0f, 1f};
+				} else {
+					m_TargetAlpha = new float[]{1f, 1f};
+				}
 
-            // Go through all the arrow renderers and set the given property of their material to the current alpha.
-            for (int i = 0; i < m_ArrowRenderers.Length; i++)
-            {
-                m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_CurrentAlpha);
-            }
-        }
+	            for (int i = 0; i < m_ArrowRenderers.Length; i++)
+	            {
+					m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
+	            }
+//            // If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
+//			if (angleDelta < m_ShowAngle && -1 * m_ShowAngle < angleDelta) {
+//				m_TargetAlpha = new float[]{0f, 0f, 0f};
+//			} else if (angleDelta < -1 * m_ShowAngle) {
+//				m_TargetAlpha = new float[]{1f, 0f, 0f};
+//			} else if (m_ShowAngle < angleDelta) {
+//				m_TargetAlpha = new float[]{0f, 0f, 1f};
+//			} else {
+//				m_TargetAlpha = new float[]{1f, 1f, 1f};
+//			}
+//
+//            // Increment the current alpha value towards the now chosen target alpha and the calculated speed.
+//			for (int i = 0; i < m_ArrowRenderers.Length; i++) {
+//				m_CurrentAlpha = Mathf.MoveTowards (m_CurrentAlpha, m_TargetAlpha[i], m_FadeSpeed * Time.deltaTime);
+//			}
+//				
+//
+//            // Go through all the arrow renderers and set the given property of their material to the current alpha.
+//            for (int i = 0; i < m_ArrowRenderers.Length; i++)
+//            {
+//
+//                m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_CurrentAlpha);
+//            }
+      }
 
 
         // Turn off the arrows entirely.
+
+
+
+
         public void Hide()
         {
             gameObject.SetActive(false);
