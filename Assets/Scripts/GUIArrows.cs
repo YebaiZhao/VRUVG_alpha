@@ -46,7 +46,6 @@ namespace VRStandardAssets.Utils
 			angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1;
 			angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
 
-			Debug.Log (Vector3.Cross(desiredForward, flatCamForward).y );//////////////??????????
 
 	            // If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
 			if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) {
