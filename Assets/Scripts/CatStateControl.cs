@@ -13,7 +13,7 @@ public class CatStateControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		anim.SetFloat("Blend", 0f);
+		//anim.SetFloat("Blend", 0f);
 	}
 	
 	// Update is called once per frame
