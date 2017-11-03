@@ -11,8 +11,8 @@ namespace Greyman{
 
 		public bool	enableDebug = true;
 		public bool VirtualRealitySupported = false;
-		public float VR_cameraDistance = 5;
-		public float VR_radius = 1.8f;
+		public float VR_cameraDistance = 2;
+		public float VR_radius = 0.75f;
 		public float VR_indicatorScale = 0.1f;
 		public GameObject canvas;
 		public int Canvas_circleRadius = 5; //size in pixels
