@@ -1,5 +1,8 @@
 ﻿//Yebai Zhao
 /*
+ * This Script doesn't attach to any object in Unity. So it is harder to tune the game values 
+ * However, every other script can access this one in a much easier way.
+ *
  * Managing game data such as time
  * Getting Controller input
 */
@@ -8,19 +11,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager> {
-
+	//Time
 	private float _timeRemaining;
 	public float maxGameTime = 5 * 60; // In seconds.
-	public string thumbstickStatus = "null";
-	public string buttonStatus = "null";
-	public bool laserHit = false;// if the laser in controller hit the cat
-	public float TimeRemaining //the time remaining from the begining of the game in sec.
+	public float TimeRemaining//the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
 		set { _timeRemaining = value; }
 	}
 
-	// Use this for initialization
+	//Thumb
+	public string thumbstickStatus = "null";
+	public string buttonStatus = "null";
+	//Cat
+	public bool laserHit = false;// if the laser in controller hit the cat
+	public float catBrithTime = 0f;
+	public float catDeathTime = 0f;
+	public float uiReportTime = 0f;
+
+	//UI
+	public bool degreeRestirt = true;
+
+
 	void Start () {
 		TimeRemaining = maxGameTime;
 
@@ -38,10 +50,23 @@ public class GameManager : Singleton<GameManager> {
 
 
 	}
+
+
+
+
+
 	/// <End of the Update>
 	/// //////////////////////////////////////////////////////////////////////
 	/// </summary>
 	/// <returns>The thumbstick status.</returns>
+	/// 
+	public void CatTimer(){
+		uiReportTime = catDeathTime - catBrithTime;
+
+	}
+
+
+
 	private string GetThumbstickStatus(){
 		string status="null";
 		/* For general input

@@ -16,13 +16,14 @@ public class UpdateHandUI : MonoBehaviour {
 	private float m_FpsNextPeriod = 0;
 	// Use this for initialization
 	void Start () {
-		m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
+		m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;//for telling FPS
 	}
 
 	// Update is called once per frame
 	void Update () {
-		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);//time
+		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);//time to the end of the game
 		controllerlabel.text = GameManager.Instance.buttonStatus;//button
+		dataA.text = FormatTime(GameManager.Instance.uiReportTime);//cat reaction time
 
 		if (Time.realtimeSinceStartup > m_FpsNextPeriod){//fps
 			m_FpsNextPeriod += fpsMeasurePeriod;

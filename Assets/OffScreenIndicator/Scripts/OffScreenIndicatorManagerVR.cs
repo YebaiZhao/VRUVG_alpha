@@ -96,8 +96,22 @@ namespace Greyman{
 				if(Vector3.Distance(pPlane, hitPoint) > radius){
 					//offscreen
 					arrowIndicator.onScreen = false;
-					Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);
-					arrowIndicator.arrow.transform.position = rToArrow.GetPoint(radius);
+					Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);//create a ray pointing to the hitPoint
+					if (GameManager.Instance.degreeRestirt) {//if the toggle from Gamemamager is on
+
+						Debug.Log ("HI");
+
+						Vector3 targetDir = Vector3.left;
+						targetDir = Camera.main.transform.TransformDirection (targetDir);
+						targetDir = Vector3.ProjectOnPlane (targetDir, plane.normal);
+						float controlledAngle = Vector3.SignedAngle (rToArrow.direction, targetDir, pPlane - pCam);
+						arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
+
+						
+					} else {
+						arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
+						Debug.Log ("HO");
+					}
 				} else {
 					//inscreen
 					arrowIndicator.onScreen = true;

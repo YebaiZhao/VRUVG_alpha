@@ -14,6 +14,13 @@ public class GameEventControll : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		LaserFunction ();
+	}
+
+
+
+
+	private void LaserFunction(){
 		Ray debug = new Ray (weaponObject.position, weaponObject.forward);
 
 		if (GameManager.Instance.buttonStatus == "Index_Triggered") {
@@ -21,9 +28,10 @@ public class GameEventControll : MonoBehaviour {
 
 			RaycastHit hit;
 			if (Physics.Raycast(weaponObject.position, weaponObject.forward, out hit)){
-				if(hit.collider.gameObject.CompareTag("Cube")){
+				if(hit.collider.gameObject.CompareTag("Cat")){
 					Destroy(hit.collider.gameObject); //kill the cat
-
+					GameManager.Instance.catDeathTime= Time.realtimeSinceStartup;
+					GameManager.Instance.CatTimer ();
 				}
 			}
 		}
