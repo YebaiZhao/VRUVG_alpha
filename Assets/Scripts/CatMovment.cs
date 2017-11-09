@@ -1,5 +1,6 @@
 ﻿//Yebai Zhao
 //This script is used to move the cat in a sequence way
+//
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,12 +9,12 @@ public class CatMovment : MonoBehaviour {
 
 
 	[SerializeField] float telePeriod = 20.0f;
+	public float catRebirthTime = 5.0f;
 	[SerializeField] private Transform lookTarget ;
 //	private float startingY;
 	private float teleNextPeriod = 0;
 	private List<Vector3> moveList = new List<Vector3>();
 	private List<Vector3> rotateList = new List<Vector3>();
-	private int moveListPointer = 0;
 	// Use this for initialization
 	void Start () {
 		//Move list of 10
@@ -52,9 +53,14 @@ public class CatMovment : MonoBehaviour {
 		if (Time.realtimeSinceStartup > teleNextPeriod) {
 			teleNextPeriod += telePeriod;
 			int p = Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
-			Debug.Log (p);
+			Debug.Log ("moving the cat to the " + p + "location");
 			transform.position = moveList[p];
 			transform.eulerAngles = rotateList [p];
+			HiddenGameManager.Instance.catBrithTime = Time.realtimeSinceStartup;
 		}
 	}
+
+
+
+
 }

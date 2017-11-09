@@ -22,11 +22,10 @@ public class CatStateControl : MonoBehaviour {
 		if (Time.realtimeSinceStartup > tpNextPeriod) { //When it's time to relocate the cat
 			tpNextPeriod = StateMachineChangeTime + Time.realtimeSinceStartup;
 			anim.SetFloat("Blend", Random.Range(0f ,3f));
-			GameManager.Instance.catBrithTime = Time.realtimeSinceStartup;
 		}
 
 
-		if (GameManager.Instance.buttonStatus == "Index_Triggered" && GameManager.Instance.laserHit == true) {
+		if (HiddenGameManager.Instance.buttonStatus == "Index_Triggered" && HiddenGameManager.Instance.catHide == true) {
 			anim.SetBool ("makeMeow", true);
 			//Set a time delay here!!!!!!!!!!!!!!!!!!!
 			SkinnedMeshRenderer render = GameObject.FindWithTag("Respawn").GetComponentInChildren<SkinnedMeshRenderer>();

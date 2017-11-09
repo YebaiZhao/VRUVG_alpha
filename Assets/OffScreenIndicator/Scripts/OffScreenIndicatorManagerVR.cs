@@ -15,6 +15,7 @@ namespace Greyman{
 		public float cameraDistance = 5; //default distance
 		public float radius = 2; //default radius
 		public float indicatorScale = 0.1f;
+		public bool degreeRestirct = false;
 
 		void Start (){
 
@@ -32,6 +33,7 @@ namespace Greyman{
 
 		void LateUpdate(){
 			for(int i = 0; i < arrowIndicators.Count; i++){
+				
 				UpdateIndicatorPosition(arrowIndicators[i], i);
 				arrowIndicators[i].UpdateEffects();
 			}
@@ -86,75 +88,80 @@ namespace Greyman{
 			//plane to draw things
 			Plane plane = new Plane(Vector3.Normalize(pCam-pPlane), pPlane);
 			//raycast line to target
-			
-			Vector3 pTarget = arrowIndicator.target.transform.position + arrowIndicator.indicator.targetOffset;
-			Ray rToTarget = new Ray(pCam, pTarget-pCam);
-			Vector3 hitPoint; //Point in plane where target hits raycasting camera.
-			float distance;
-			if (plane.Raycast(rToTarget,out distance)){
-				hitPoint = rToTarget.GetPoint(distance);
-				if(Vector3.Distance(pPlane, hitPoint) > radius){
-					//offscreen
-					arrowIndicator.onScreen = false;
-					Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);//create a ray pointing to the hitPoint
-					if (GameManager.Instance.degreeRestirt) {//if the toggle from Gamemamager is on
+			if (HiddenGameManager.Instance.catHide) {////////////////If the target is NULL
+				arrowIndicator.arrow.SetActive(false);
+			}
 
-						Debug.Log ("HI");
 
-						Vector3 targetDir = Vector3.left;
-						targetDir = Camera.main.transform.TransformDirection (targetDir);
-						targetDir = Vector3.ProjectOnPlane (targetDir, plane.normal);
-						float controlledAngle = Vector3.SignedAngle (rToArrow.direction, targetDir, pPlane - pCam);
-						arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
 
-						
-					} else {
-						arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
-						Debug.Log ("HO");
-					}
-				} else {
-					//inscreen
-					arrowIndicator.onScreen = true;
-					arrowIndicator.arrow.transform.position = hitPoint;
-				}
-				//We do angle stuff in local space *GLOBAL SPACE
-				Vector3 plPlane = indicatorsParentObj.transform.localPosition;
-				Vector3 plHitPoint = arrowIndicator.arrow.transform.localPosition;
-				// plPlane local pos is 0,0 but maybe we move the plane?
-				//Apply Head rotation angle
-				float angle = (90 - Camera.main.transform.localEulerAngles.z) * Mathf.Deg2Rad;
 
-				if((arrowIndicator.onScreen && arrowIndicator.indicator.onScreenRotates) || (!arrowIndicator.onScreen && arrowIndicator.indicator.offScreenRotates)){
-					angle = Mathf.Atan2(plHitPoint.y - plPlane.y, plHitPoint.x - plPlane.x);
-				}
-				arrowIndicator.arrow.transform.localEulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg - 90);
-
-				//Debug some lines
-				if(enableDebug){
-					Utils.DrawPlane(Vector3.Normalize(pCam-pPlane), pPlane, radius);
-					Debug.DrawRay(rToTarget.origin, rToTarget.direction);
-					Debug.DrawLine(pCam, hitPoint, Color.white);
-					Debug.DrawLine (hitPoint, pPlane, Color.magenta);
-				}
-			} else {
-				rToTarget = new Ray(pTarget, pCam-pTarget);
+			else {/////////////If the target is there
+				arrowIndicator.arrow.SetActive(true);
+				Vector3 pTarget = arrowIndicator.target.transform.position + arrowIndicator.indicator.targetOffset;
+				Ray rToTarget = new Ray(pCam, pTarget-pCam);
+				Vector3 hitPoint; //Point in plane where target hits raycasting camera.
+				float distance;
 				if (plane.Raycast(rToTarget,out distance)){
 					hitPoint = rToTarget.GetPoint(distance);
-					Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);
-					arrowIndicator.arrow.transform.position = rToArrow.GetPoint(-radius);
-					arrowIndicator.onScreen = false;
+					if(Vector3.Distance(pPlane, hitPoint) > radius){
+						//offscreen
+						arrowIndicator.onScreen = false;
+						Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);//create a ray pointing to the hitPoint
+						if (degreeRestirct) {////////if the toggle from Angle control is on - Yebai
+							Vector3 targetDir = Camera.main.transform.TransformDirection (Vector3.up);
+							targetDir = Vector3.ProjectOnPlane (targetDir, plane.normal);
+							float controlledAngle = Vector3.SignedAngle (rToArrow.direction, targetDir, pPlane - pCam);
+							Debug.Log (controlledAngle);
+							arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
 
+						} else {////Do the normal thing - Yebai
+							arrowIndicator.arrow.transform.position = rToArrow.GetPoint (radius);
+						}
+					} else {
+						//inscreen
+						arrowIndicator.onScreen = true;
+						arrowIndicator.arrow.transform.position = hitPoint;
+					}
+					//We do angle stuff in local space *GLOBAL SPACE
 					Vector3 plPlane = indicatorsParentObj.transform.localPosition;
 					Vector3 plHitPoint = arrowIndicator.arrow.transform.localPosition;
+					// plPlane local pos is 0,0 but maybe we move the plane?
+					//Apply Head rotation angle
 					float angle = (90 - Camera.main.transform.localEulerAngles.z) * Mathf.Deg2Rad;
-					if(arrowIndicator.indicator.offScreenRotates){
+
+					if((arrowIndicator.onScreen && arrowIndicator.indicator.onScreenRotates) || (!arrowIndicator.onScreen && arrowIndicator.indicator.offScreenRotates)){
 						angle = Mathf.Atan2(plHitPoint.y - plPlane.y, plHitPoint.x - plPlane.x);
 					}
 					arrowIndicator.arrow.transform.localEulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg - 90);
+
+					//Debug some lines
+					if(enableDebug){
+						Utils.DrawPlane(Vector3.Normalize(pCam-pPlane), pPlane, radius);
+						Debug.DrawRay(rToTarget.origin, rToTarget.direction);
+						Debug.DrawLine(pCam, hitPoint, Color.white);
+						Debug.DrawLine (hitPoint, pPlane, Color.magenta);
+					}
 				} else {
-					//target-cast is parallel to the plane, using the last indicator position is fine.
+					rToTarget = new Ray(pTarget, pCam-pTarget);
+					if (plane.Raycast(rToTarget,out distance)){
+						hitPoint = rToTarget.GetPoint(distance);
+						Ray rToArrow = new Ray(pPlane, hitPoint - pPlane);
+						arrowIndicator.arrow.transform.position = rToArrow.GetPoint(-radius);
+						arrowIndicator.onScreen = false;
+
+						Vector3 plPlane = indicatorsParentObj.transform.localPosition;
+						Vector3 plHitPoint = arrowIndicator.arrow.transform.localPosition;
+						float angle = (90 - Camera.main.transform.localEulerAngles.z) * Mathf.Deg2Rad;
+						if(arrowIndicator.indicator.offScreenRotates){
+							angle = Mathf.Atan2(plHitPoint.y - plPlane.y, plHitPoint.x - plPlane.x);
+						}
+						arrowIndicator.arrow.transform.localEulerAngles = new Vector3(0, 0, angle * Mathf.Rad2Deg - 90);
+					} else {
+						//target-cast is parallel to the plane, using the last indicator position is fine.
+					}
 				}
 			}
+
 		}
 	}
 }

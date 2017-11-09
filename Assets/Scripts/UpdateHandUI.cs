@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class UpdateHandUI : MonoBehaviour {
 
-	[SerializeField] private Text timerlabel ;
-	[SerializeField] private Text controllerlabel;
-	[SerializeField] private Text fpslabel;
-	[SerializeField] private Text dataA;
+	[SerializeField] private Text timerlabel = null;
+	[SerializeField] private Text controllerlabel= null;
+	[SerializeField] private Text fpslabel= null;
+	[SerializeField] private Text dataA= null;
 	[SerializeField] private Text dataB;
 	[SerializeField] float fpsMeasurePeriod = 2.0f;
 
@@ -21,9 +21,9 @@ public class UpdateHandUI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		timerlabel.text = FormatTime (GameManager.Instance.TimeRemaining);//time to the end of the game
-		controllerlabel.text = GameManager.Instance.buttonStatus;//button
-		dataA.text = FormatTime(GameManager.Instance.uiReportTime);//cat reaction time
+		timerlabel.text = FormatTime (HiddenGameManager.Instance.TimeRemaining);//time to the end of the game
+		controllerlabel.text = HiddenGameManager.Instance.buttonStatus;//button
+		dataA.text = FormatTime(HiddenGameManager.Instance.uiReportTime);//cat reaction time
 
 		if (Time.realtimeSinceStartup > m_FpsNextPeriod){//fps
 			m_FpsNextPeriod += fpsMeasurePeriod;
@@ -36,7 +36,7 @@ public class UpdateHandUI : MonoBehaviour {
 
 
 	private string FormatTime(float timeInSeconds){
-		return string.Format("{0}:{1:00}", Mathf.FloorToInt(timeInSeconds/60), Mathf.FloorToInt(timeInSeconds % 60));
+		return string.Format("{0}:{1:00}'{2:0000}", Mathf.FloorToInt(timeInSeconds/60), Mathf.FloorToInt(timeInSeconds % 60), Mathf.FloorToInt((timeInSeconds % 1)*1000));
 	}
 
 

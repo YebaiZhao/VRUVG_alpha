@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : Singleton<GameManager> {
+public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Time
 	private float _timeRemaining;
 	public float maxGameTime = 5 * 60; // In seconds.
@@ -24,14 +24,14 @@ public class GameManager : Singleton<GameManager> {
 	public string thumbstickStatus = "null";
 	public string buttonStatus = "null";
 	//Cat
-	public bool laserHit = false;// if the laser in controller hit the cat
+	public bool catRegen = true;//Is the cat regenalbe
+	public bool catHide = false;// if the laser in controller hit the cat
 	public float catBrithTime = 0f;
 	public float catDeathTime = 0f;
 	public float uiReportTime = 0f;
 
 	//UI
 	public bool degreeRestirt = true;
-
 
 	void Start () {
 		TimeRemaining = maxGameTime;
@@ -41,12 +41,13 @@ public class GameManager : Singleton<GameManager> {
 	// Update is called once per frame
 	void Update () {
 		TimeRemaining -= Time.deltaTime;
+		thumbstickStatus = GetThumbstickStatus();
+		buttonStatus = GetButtonStatus ();
+
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
-		thumbstickStatus = GetThumbstickStatus();
-		buttonStatus = GetButtonStatus ();
 
 
 	}
@@ -60,12 +61,9 @@ public class GameManager : Singleton<GameManager> {
 	/// </summary>
 	/// <returns>The thumbstick status.</returns>
 	/// 
-	public void CatTimer(){
+	public void ReactionTimer(){
 		uiReportTime = catDeathTime - catBrithTime;
-
 	}
-
-
 
 	private string GetThumbstickStatus(){
 		string status="null";

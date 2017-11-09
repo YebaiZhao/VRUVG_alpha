@@ -11,6 +11,7 @@ namespace Greyman{
 
 		public bool	enableDebug = true;
 		public bool VirtualRealitySupported = false;
+		public bool VR_degreeRestirct = false;
 		public float VR_cameraDistance = 2;
 		public float VR_radius = 0.75f;
 		public float VR_indicatorScale = 0.1f;
@@ -33,6 +34,7 @@ namespace Greyman{
 			*/
 			if(VirtualRealitySupported){
 				manager = gameObject.AddComponent<OffScreenIndicatorManagerVR>();
+				(manager as OffScreenIndicatorManagerVR).degreeRestirct = VR_degreeRestirct;
 				(manager as OffScreenIndicatorManagerVR).cameraDistance = VR_cameraDistance;
 				(manager as OffScreenIndicatorManagerVR).radius = VR_radius;
 				(manager as OffScreenIndicatorManagerVR).indicatorScale = VR_indicatorScale;
