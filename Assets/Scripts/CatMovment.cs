@@ -8,7 +8,7 @@ using UnityEngine;
 public class CatMovment : MonoBehaviour {
 
 
-	[SerializeField] float telePeriod = 20.0f;
+	[SerializeField] float Period = 20.0f;
 	public float catRebirthTime = 5.0f;
 	[SerializeField] private Transform lookTarget ;
 //	private float startingY;
@@ -43,21 +43,24 @@ public class CatMovment : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		objectMove ();
+		if (Time.realtimeSinceStartup > teleNextPeriod) {
+			objectMove ();
+		}
+
 		//transform.LookAt(lookTarget); //look towards the player
 	}
 
 
 
 	public void objectMove(){
-		if (Time.realtimeSinceStartup > teleNextPeriod) {
-			teleNextPeriod += telePeriod;
-			int p = Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
-			Debug.Log ("moving the cat to the " + p + "location");
-			transform.position = moveList[p];
-			transform.eulerAngles = rotateList [p];
-			HiddenGameManager.Instance.catBrithTime = Time.realtimeSinceStartup;
-		}
+		int p = Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
+		transform.position = moveList[p];
+		transform.eulerAngles = rotateList [p];
+		HiddenGameManager.Instance.catBrithTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
+		teleNextPeriod = Time.realtimeSinceStartup + Period;
+
+		Debug.Log ("moving the cat to the " + p + "location");
+
 	}
 
 

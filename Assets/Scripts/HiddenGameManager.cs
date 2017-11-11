@@ -24,32 +24,38 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public string thumbstickStatus = "null";
 	public string buttonStatus = "null";
 	//Cat
-	public bool catRegen = true;//Is the cat regenalbe
+	//Is the cat regenalbe
 	public bool catHide = false;// if the laser in controller hit the cat
+	public float catHideTime = 5f;
 	public float catBrithTime = 0f;
 	public float catDeathTime = 0f;
 	public float uiReportTime = 0f;
+	private GameObject[] inCatTags;
+	private CatMovment catScript;
 
 	//UI
 	public bool degreeRestirt = true;
 
 	void Start () {
 		TimeRemaining = maxGameTime;
+		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
+
+	
+		catScript = inCatTags[0].GetComponent<CatMovment> ();
+
 
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		TimeRemaining -= Time.deltaTime;
 		thumbstickStatus = GetThumbstickStatus();
 		buttonStatus = GetButtonStatus ();
-
+		catRebirth ();
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
-
-
 	}
 
 
@@ -61,6 +67,22 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	/// </summary>
 	/// <returns>The thumbstick status.</returns>
 	/// 
+	/// 
+	public void catRebirth(){
+		if ((Time.realtimeSinceStartup - catDeathTime)>catHideTime && catHide == true) {
+			catHide = false;
+			foreach (GameObject obj in inCatTags) {
+				obj.SetActive (true);
+			}
+			catScript.objectMove ();
+		}
+
+	}
+
+
+
+
+
 	public void ReactionTimer(){
 		uiReportTime = catDeathTime - catBrithTime;
 	}

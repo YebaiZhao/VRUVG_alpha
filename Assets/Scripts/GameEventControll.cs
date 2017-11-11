@@ -16,23 +16,9 @@ public class GameEventControll : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		LaserFunction ();
-		catRebith();
-
 	}
 
 
-	public void catRebith(){
-		GameObject[] respawns = new GameObject[];
-		respawns = GameObject.FindGameObjectsWithTag ("Cat");
-		if ((Time.realtimeSinceStartup - HiddenGameManager.Instance.catDeathTime) >5.0f) {
-			//Debug.Log (Time.realtimeSinceStartup - HiddenGameManager.Instance.catDeathTime);
-			HiddenGameManager.Instance.catHide = false;
-
-			foreach (GameObject respawn in respawns) {
-				respawn.SetActive (true);
-			}
-		}
-	}
 
 	private void LaserFunction(){
 		Ray debug = new Ray (weaponObject.position, weaponObject.forward);
@@ -42,14 +28,15 @@ public class GameEventControll : MonoBehaviour {
 
 			RaycastHit hit;
 			if (Physics.Raycast(weaponObject.position, weaponObject.forward, out hit)){
-				if(hit.collider.gameObject.CompareTag("Cat")){
+				if(hit.collider.gameObject.CompareTag("Unique")){
 					hit.collider.gameObject.SetActive (false);
 
 					//Destroy(hit.collider.gameObject); //kill the cat
-					Debug.Log("Cat Deactived");
 					HiddenGameManager.Instance.catDeathTime= Time.realtimeSinceStartup;
 					HiddenGameManager.Instance.ReactionTimer ();
 					HiddenGameManager.Instance.catHide = true;
+
+					Debug.Log("Cat Deactived by laser");
 
 				}
 			}
