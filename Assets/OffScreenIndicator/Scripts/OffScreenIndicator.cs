@@ -15,12 +15,14 @@ namespace Greyman{
 		public float VR_cameraDistance = 2;
 		public float VR_radius = 0.75f;
 		public float VR_indicatorScale = 0.1f;
-		public GameObject canvas;
+        public GameObject VR_canvasParent; //Where the drawing canvas is attached in VR
+        public GameObject canvas;
 		public int Canvas_circleRadius = 5; //size in pixels
 		public int Canvas_border = 10; // when Canvas is Square pixels in border
 		public int Canvas_indicatorSize = 100; //size in pixels
 		public Indicator[] indicators;
 		public FixedTarget[] targets;
+        
 		//public 
 		private OffScreenIndicatorManager manager;
 
@@ -38,7 +40,10 @@ namespace Greyman{
 				(manager as OffScreenIndicatorManagerVR).cameraDistance = VR_cameraDistance;
 				(manager as OffScreenIndicatorManagerVR).radius = VR_radius;
 				(manager as OffScreenIndicatorManagerVR).indicatorScale = VR_indicatorScale;
-				(manager as OffScreenIndicatorManagerVR).CreateIndicatorsParent();
+				(manager as OffScreenIndicatorManagerVR).drawingInVR = VR_canvasParent;
+                (manager as OffScreenIndicatorManagerVR).CreateIndicatorsParent();
+                
+                
 			} else {
 				manager = gameObject.AddComponent<OffScreenIndicatorManagerCanvas>();
 				(manager as OffScreenIndicatorManagerCanvas).indicatorsParentObj = canvas;
@@ -77,6 +82,7 @@ namespace Greyman{
 		public Color offScreenColor = Color.white;
 		public bool offScreenRotates;
 		public Vector3 targetOffset;
+
 		/// <summary>
 		/// Both sprites need to have the same transition
 		/// aswell both sprites need to have the same duration.

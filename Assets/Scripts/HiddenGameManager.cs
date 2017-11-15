@@ -39,11 +39,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	void Start () {
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
-
-	
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
-
-
 	}
 
 	// Update is called once per frame

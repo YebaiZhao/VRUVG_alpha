@@ -43,7 +43,7 @@ namespace VRStandardAssets.Utils
             Vector3 flatCamForward = Vector3.ProjectOnPlane(m_Camera.forward, Vector3.up).normalized;
 
             // The difference angle between the desired facing and the current facing of the player.
-			angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1;
+			angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1; //Just -1 or 1
 			angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
 
 

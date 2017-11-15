@@ -6,7 +6,10 @@ public class GameEventControll : MonoBehaviour {
 	public Transform weaponObject;
 	public AudioClip gunclip;
 	public AudioSource audioSource1;
+
 	// Use this for initialization
+
+
 	void Start () {
 		audioSource1 = GetComponent<AudioSource> ();
 		audioSource1.clip = gunclip;
@@ -16,6 +19,7 @@ public class GameEventControll : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		LaserFunction ();
+
 	}
 
 
