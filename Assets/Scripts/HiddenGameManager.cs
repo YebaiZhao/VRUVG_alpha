@@ -34,7 +34,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	private CatMovment catScript;
 
 	//UI
-	public bool degreeRestirt = true;
+
+
 
 	void Start () {
 		TimeRemaining = maxGameTime;

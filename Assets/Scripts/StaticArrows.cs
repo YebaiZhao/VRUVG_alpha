@@ -5,7 +5,7 @@ namespace VRStandardAssets.Utils
 { 
     // This class fades in and out arrows which indicate to
     // the player which direction they should be facing.
-	public class GUIArrows : MonoBehaviour
+	public class StaticArrows : MonoBehaviour
     {
 		public float angleDelta;
 
@@ -14,7 +14,6 @@ namespace VRStandardAssets.Utils
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
-		[SerializeField] private bool staticToTarget;
 
         private float m_CurrentAlpha;                               // The alpha the arrows currently have.
         private float[] m_TargetAlpha;                              // The alpha the arrows are fading towards.
@@ -27,32 +26,49 @@ namespace VRStandardAssets.Utils
 	    {
             // Speed is distance (zero alpha to one alpha) divided by time (duration).
             m_FadeSpeed = 1f / m_FadeDuration;
-
-			if (staticToTarget) {
-				
-			}
+			transform.position = m_Camera.position;
+			transform.eulerAngles = new Vector3 (0, m_Camera.eulerAngles.y, 0);
 	    }
 
 
         private void Update()
         {	//Set the arrow ring to aling with camera.
 			//transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
-			if (HiddenGameManager.Instance.catHide) {
-				m_TargetAlpha = new float[]{ 0f, 0f };
+			if (HiddenGameManager.Instance.catHide) {//Cat is hiding
+				m_TargetAlpha = new float[]{ 0f, 0f, 0f };
 				for (int i = 0; i < m_ArrowRenderers.Length; i++)
 				{
 					m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
 				}
-			} else { //Cat is out
+			} else { //Cat is showing
 
-				if (staticToTarget) {
-					transform.position = m_Camera.position; //Only refresh arrows position 
+				Vector3 directAim = m_DesiredLocation.transform.position - m_Camera.transform.position; // The vector shooting from camrea to the cat
+				Vector3 desiredForward = m_DesiredLocation == null ? Vector3.forward : Vector3.ProjectOnPlane(directAim, Vector3.up).normalized;//The vector is now flat on x-z plane
+				Vector3 flatCamForward = Vector3.ProjectOnPlane(m_Camera.forward, Vector3.up).normalized; // The forward vector of the camera as it would be on a flat plane.
 
+				// The difference angle between the desired facing and the current facing of the player.
+				angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1; //Just -1 or 1
+				angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
+
+				// If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
+				if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) { //within in -30 to 30
+					m_TargetAlpha = new float[]{0f, 0f, 0f};
+				} else if (angleDelta < -1*m_ShowAngle) { // smaller than -30
+					m_TargetAlpha = new float[]{1f, 0f, 1f};
+				} else if (m_ShowAngle < angleDelta) {   //lager than 30
+					m_TargetAlpha = new float[]{0f, 1f, 1f};
 				} else {
-					transform.position = m_Camera.position;
-					transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);// Refresh both posistion and rotation.
+					m_TargetAlpha = new float[]{1f, 1f, 1f};
 				}
-				Traceing ();
+				for (int i = 0; i < m_ArrowRenderers.Length; i++)
+				{
+					m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
+				}
+
+
+				transform.position = m_Camera.position;
+				Vector3 targetOnXZ = new Vector3 (m_DesiredLocation.position.x, this.transform.position.y, m_DesiredLocation.position.z);
+				transform.LookAt(targetOnXZ);// Refresh both posistion and rotation.
 			}
 
 //            // If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
@@ -79,31 +95,6 @@ namespace VRStandardAssets.Utils
 //                m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_CurrentAlpha);
 //            }
       }
-
-		public void Traceing(){
-			Vector3 directAim = m_DesiredLocation.transform.position - m_Camera.transform.position; // The vector shooting from camrea to the cat
-			Vector3 desiredForward = m_DesiredLocation == null ? Vector3.forward : Vector3.ProjectOnPlane(directAim, Vector3.up).normalized;//The vector is now flat on x-z plane
-			Vector3 flatCamForward = Vector3.ProjectOnPlane(m_Camera.forward, Vector3.up).normalized; // The forward vector of the camera as it would be on a flat plane.
-
-			// The difference angle between the desired facing and the current facing of the player.
-			angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1; //Just -1 or 1
-			angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
-
-			// If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
-			if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) {
-				m_TargetAlpha = new float[]{0f, 0f};
-			} else if (angleDelta < -1*m_ShowAngle) {
-				m_TargetAlpha = new float[]{1f, 0f};
-			} else if (m_ShowAngle < angleDelta) {
-				m_TargetAlpha = new float[]{0f, 1f};
-			} else {
-				m_TargetAlpha = new float[]{1f, 1f};
-			}
-			for (int i = 0; i < m_ArrowRenderers.Length; i++)
-			{
-				m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
-			}
-		}
 
 
 		// Turn off the arrows entirely.

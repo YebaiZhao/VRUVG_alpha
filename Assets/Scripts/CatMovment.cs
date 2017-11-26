@@ -57,7 +57,7 @@ public class CatMovment : MonoBehaviour {
 		transform.position = moveList[p];
 		transform.eulerAngles = rotateList [p];
 		HiddenGameManager.Instance.catBrithTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
-		teleNextPeriod = Time.realtimeSinceStartup + Period;
+		teleNextPeriod += Period;
 		Debug.Log ("Moving the cat to the location " + p);
 	}
 
