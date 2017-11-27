@@ -26,7 +26,7 @@ public class GameEventControll : MonoBehaviour {
 
 
 	private void LaserFunction(){
-		Ray debug = new Ray (weaponObject.position, weaponObject.forward);
+		//Ray debug = new Ray (weaponObject.position, weaponObject.forward);
 
 		if (HiddenGameManager.Instance.buttonStatus == "Index_Triggered") {
 			audioSource1.Play (); ///play the gun shot
@@ -38,7 +38,7 @@ public class GameEventControll : MonoBehaviour {
 
 					//Destroy(hit.collider.gameObject); //kill the cat
 					HiddenGameManager.Instance.catDeathTime= Time.realtimeSinceStartup;
-					HiddenGameManager.Instance.ReactionTimer ();
+					HiddenGameManager.Instance.CountReactionTime ();
 					HiddenGameManager.Instance.catHide = true;
 
 					Debug.Log("Cat Deactived by laser");

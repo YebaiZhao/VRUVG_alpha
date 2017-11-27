@@ -13,7 +13,7 @@ using UnityEngine;
 public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Time
 	private float _timeRemaining;
-	public float maxGameTime = 5 * 60; // In seconds.
+	public float maxGameTime = 180; //seconds.
 	public float TimeRemaining//the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
@@ -35,12 +35,21 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 	//UI
 
+	//Maintask
+	private float textChangeT = 8f;
+	public float nextTextChangeTime = 0f;
+	public string currentColor = "";
+	public int playerScore = 0;
+	public bool changeText = true;
+	public string scoredCube="null";
 
 
 	void Start () {
+
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
+
 	}
 
 	// Update is called once per frame
@@ -49,15 +58,11 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		thumbstickStatus = GetThumbstickStatus();
 		buttonStatus = GetButtonStatus ();
 		catRebirth ();
-
+		MainTaskMananger ();
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
 	}
-
-
-
-
 
 	/// <End of the Update>
 	/// //////////////////////////////////////////////////////////////////////
@@ -76,13 +81,34 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 	}
 
-
-
-
-
-	public void ReactionTimer(){
+	public void CountReactionTime(){
 		uiReportTime = catDeathTime - catBrithTime;
 	}
+
+	public void MainTaskMananger(){
+
+		if (Time.realtimeSinceStartup >nextTextChangeTime) { //update the text every 8sec
+			changeText = true;
+			nextTextChangeTime += textChangeT;
+		}
+		if (scoredCube != "null") { //once scoredcube info is received
+
+
+			if (scoredCube == currentColor) {
+				playerScore += 100;
+				changeText = true;
+			} else {
+				playerScore -= 50;
+				changeText = true;
+			}
+
+
+			nextTextChangeTime = Time.realtimeSinceStartup + textChangeT;
+			scoredCube = "null";
+		}
+	}
+
+
 
 	private string GetThumbstickStatus(){
 		string status="null";
