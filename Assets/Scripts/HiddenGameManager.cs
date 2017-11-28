@@ -26,15 +26,15 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Cat
 	//Is the cat regenalbe
 	public bool catHide = false;// if the laser in controller hit the cat
-	public float catHideTime = 5f;
-	public float catBrithTime = 0f;
+	public float catHideTime = 10f;
+	public float catTeleportTime = 0f;
 	public float catDeathTime = 0f;
 	public float uiReportTime = 0f;
 	private GameObject[] inCatTags;
 	private CatMovment catScript;
 
 	//UI
-
+	public bool holdVG = false;
 	//Maintask
 	private float textChangeT = 8f;
 	public float nextTextChangeTime = 0f;
@@ -57,7 +57,11 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		TimeRemaining -= Time.deltaTime;
 		thumbstickStatus = GetThumbstickStatus();
 		buttonStatus = GetButtonStatus ();
-		catRebirth ();
+
+		if ((Time.realtimeSinceStartup - catDeathTime) > catHideTime && catHide == true) {
+			catRebirth ();
+		}
+
 		MainTaskMananger ();
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
@@ -70,20 +74,35 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	/// <returns>The thumbstick status.</returns>
 	/// 
 	/// 
-	public void catRebirth(){
-		if ((Time.realtimeSinceStartup - catDeathTime)>catHideTime && catHide == true) {
-			catHide = false;
-			foreach (GameObject obj in inCatTags) {
-				obj.SetActive (true);
-			}
-			catScript.objectMove ();
-		}
+	/// 
+	/*public static float GaussianDistr(float mean, float stdDev){
+		//Random rand = new Random(); //reuse this if you are generating many
+		float u1 = 1.0-Random.value; //uniform(0,1] random doubles
+		float u2 = 1.0-Random.value;
+		float randStdNormal = Mathf.Sqrt(-2.0 * Mathf.Log(u1)) *
+			Mathf.Sin(2.0 * Mathf.PI * u2); //random normal(0,1)
+		float randNormal =
+			mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+		return randNormal;
+	}*/
 
+
+
+	public void catRebirth(){
+		catHide = false;
+		foreach (GameObject obj in inCatTags) {
+			obj.SetActive (true);
+		}
+		catScript.CatOnDesk ();
 	}
+
+
 
 	public void CountReactionTime(){
-		uiReportTime = catDeathTime - catBrithTime;
+		uiReportTime = catDeathTime - catTeleportTime;
 	}
+
+
 
 	public void MainTaskMananger(){
 
@@ -94,10 +113,10 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		if (scoredCube != "null") { //once scoredcube info is received
 
 
-			if (scoredCube == currentColor) {
+			if (scoredCube == currentColor) {//correct
 				playerScore += 100;
 				changeText = true;
-			} else {
+			} else { //incorrect 
 				playerScore -= 50;
 				changeText = true;
 			}
@@ -137,5 +156,6 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		if (OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)) {status = "Index_Triggered";}
 		return status;
 	}
-		
+
+
 }

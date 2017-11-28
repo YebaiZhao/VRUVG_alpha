@@ -34,7 +34,7 @@ namespace VRStandardAssets.Utils
         private void Update()
         {	//Set the arrow ring to aling with camera.
 			//transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
-			if (HiddenGameManager.Instance.catHide) {//Cat is hiding
+			if (HiddenGameManager.Instance.catHide ||HiddenGameManager.Instance.holdVG) {//Cat is hiding
 				m_TargetAlpha = new float[]{ 0f, 0f, 0f };
 				for (int i = 0; i < m_ArrowRenderers.Length; i++)
 				{

@@ -28,7 +28,7 @@ public class UpdateInstrBoard : MonoBehaviour {
 		// Load a new font asset and assign it to the text object.
 		m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Roboto-Bold SDF");
 		m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/Roboto-Bold SDF - Surface");// Load a new material preset which was created with the context menu duplicate.
-		m_text.fontSize = 1.5f;
+		m_text.fontSize = 1f;
 		m_text.autoSizeTextContainer = true;
 		// Set the text
 		m_text.text = "A <#0080ff>simple</color> line of text.";
@@ -40,9 +40,11 @@ public class UpdateInstrBoard : MonoBehaviour {
 	void Update()
 	{
 		if (HiddenGameManager.Instance.changeText ){ //reroll
-			int pointer = Random.Range (0, Mathf.Min(visualColor.Length, colorText.Length));
-			HiddenGameManager.Instance.currentColor = colorText [pointer];
-			m_text.SetText("Put the <#" + visualColor[pointer] + ">"+ colorText[pointer]+"</color> in the wood box. \n"
+			int colorPointer = Random.Range (0, visualColor.Length);
+			int textPointer = (colorPointer + Random.Range (1, colorText.Length)) % colorText.Length;
+
+			HiddenGameManager.Instance.currentColor = colorText [textPointer];
+			m_text.SetText("Put the <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box. \n"
 				+"Your Score is: "+HiddenGameManager.Instance.playerScore);
 			HiddenGameManager.Instance.changeText = false;
 		}

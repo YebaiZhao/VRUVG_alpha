@@ -11,12 +11,19 @@ public class CatMovment : MonoBehaviour {
 	[SerializeField] float Period = 20.0f;
 	public float catRebirthTime = 5.0f;
 	[SerializeField] private Transform lookTarget ;
+	public AudioClip aclip;
+	public AudioSource audioSource1;
+
 //	private float startingY;
 	private float teleNextPeriod = 0;
 	private List<Vector3> moveList = new List<Vector3>();
 	private List<Vector3> rotateList = new List<Vector3>();
 	// Use this for initialization
 	void Start () {
+
+
+		audioSource1 = GetComponent<AudioSource> ();
+		audioSource1.clip = aclip;
 		//Move list of 10
 		moveList.Add (new Vector3(48.5f, 3.695f, 35.54f));//1
 		moveList.Add (new Vector3(42.101f, 5.513f, 44.098f));
@@ -44,7 +51,7 @@ public class CatMovment : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Time.realtimeSinceStartup > teleNextPeriod) {
-			objectMove ();
+			CatTeleport ();
 		}
 
 		//transform.LookAt(lookTarget); //look towards the player
@@ -52,16 +59,22 @@ public class CatMovment : MonoBehaviour {
 
 
 
-	public void objectMove(){
+	public void CatTeleport(){
 		int p = Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
 		transform.position = moveList[p];
 		transform.eulerAngles = rotateList [p];
-		HiddenGameManager.Instance.catBrithTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
+		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
 		teleNextPeriod += Period;
-		Debug.Log ("Moving the cat to the location " + p);
+		HiddenGameManager.Instance.holdVG = false;
+		Debug.Log ("Moving the cat to the "+p+" location ");
 	}
 
 
-
+	public void CatOnDesk(){
+		transform.position = new Vector3(41.33f, 4.5f, 36.7f);
+		audioSource1.Play();
+		teleNextPeriod = Time.realtimeSinceStartup + 1f;
+		HiddenGameManager.Instance.holdVG = true;
+	}
 
 }

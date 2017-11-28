@@ -104,7 +104,7 @@ namespace Greyman
             //plane to draw things
             Plane plane = new Plane(Vector3.Normalize(pCam - pPlane), pPlane);
             //raycast line to target
-            if (HiddenGameManager.Instance.catHide)
+			if (HiddenGameManager.Instance.catHide || HiddenGameManager.Instance.holdVG)
             {////////////////If the target is NULL
                 arrowIndicator.arrow.SetActive(false);//Hide the Arrow
             }
