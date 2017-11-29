@@ -40,24 +40,19 @@ public class UpdateInstrBoard : MonoBehaviour {
 	void Update()
 	{
 		if (HiddenGameManager.Instance.changeText ){ //reroll
-			int colorPointer = Random.Range (0, visualColor.Length);
-			int textPointer = (colorPointer + Random.Range (1, colorText.Length)) % colorText.Length;
-
-			HiddenGameManager.Instance.currentColor = colorText [textPointer];
-			m_text.SetText("Put the <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box. \n"
-				+"Your Score is: "+HiddenGameManager.Instance.playerScore);
-			HiddenGameManager.Instance.changeText = false;
+			UpdateText();
 		}
 
 	}
 
 	public void UpdateText(){
-		int pointer = Random.Range (0, Mathf.Min(visualColor.Length, colorText.Length));
-		HiddenGameManager.Instance.currentColor = colorText [pointer];
-		m_text.SetText("Put the <#" + visualColor[pointer] + ">"+ colorText[pointer]+"</color> in the wood box. \n"
+		int colorPointer = Random.Range (0, visualColor.Length);
+		int textPointer = (colorPointer + Random.Range (1, colorText.Length)) % colorText.Length;
+
+		HiddenGameManager.Instance.currentColor = colorText [textPointer];
+		m_text.SetText("Put the <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box. \n"
 			+"Your Score is: "+HiddenGameManager.Instance.playerScore);
 		HiddenGameManager.Instance.changeText = false;
 	}
-
 
 }

@@ -28,20 +28,32 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public bool catHide = false;// if the laser in controller hit the cat
 	public float catHideTime = 10f;
 	public float catTeleportTime = 0f;
+	public float catBirthTime =0f;
 	public float catDeathTime = 0f;
 	public float uiReportTime = 0f;
+	public Vector3 catLocation ;
 	private GameObject[] inCatTags;
 	private CatMovment catScript;
 
 	//UI
 	public bool holdVG = false;
+
+
+
 	//Maintask
-	private float textChangeT = 8f;
+	private float textChangeT = 12f;
 	public float nextTextChangeTime = 0f;
 	public string currentColor = "";
 	public int playerScore = 0;
 	public bool changeText = true;
 	public string scoredCube="null";
+	public Vector3 cubeHome = new Vector3(41.29f, 4.52f, 35.9f);
+
+
+	//2ndTask
+	public List<float> reportTimeList = new List<float>();
+	public float total_UGTime = 0f;
+	public float mean_UGTime = 0f;
 
 
 	void Start () {
@@ -63,6 +75,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		}
 
 		MainTaskMananger ();
+
+
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
@@ -94,12 +108,15 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			obj.SetActive (true);
 		}
 		catScript.CatOnDesk ();
+		catBirthTime = Time.realtimeSinceStartup;
 	}
 
 
 
 	public void CountReactionTime(){
-		uiReportTime = catDeathTime - catTeleportTime;
+	
+		uiReportTime = catDeathTime - catBirthTime;
+		reportTimeList.Add (uiReportTime);
 	}
 
 
@@ -117,17 +134,21 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 				playerScore += 100;
 				changeText = true;
 			} else { //incorrect 
-				playerScore -= 50;
+				playerScore -= 200;
 				changeText = true;
 			}
-
-
 			nextTextChangeTime = Time.realtimeSinceStartup + textChangeT;
 			scoredCube = "null";
 		}
 	}
 
-
+	public void CalulateReaction(){
+		total_UGTime = 0f;
+		foreach (float t in reportTimeList) {
+			total_UGTime += t;
+		}
+		mean_UGTime = total_UGTime / reportTimeList.Count;
+	}
 
 	private string GetThumbstickStatus(){
 		string status="null";
