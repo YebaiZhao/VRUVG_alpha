@@ -39,7 +39,7 @@ public class CubeControl : MonoBehaviour {
 	}
 	public bool CheckRange(Vector3 center){
 		float d = Vector3.Distance (transform.position, center);
-		if (d < 0.5f) {
+		if (d < 0.4f) {
 			return true;
 		} else {
 			return false;

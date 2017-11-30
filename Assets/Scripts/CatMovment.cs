@@ -8,7 +8,7 @@ using UnityEngine;
 public class CatMovment : MonoBehaviour {
 
 
-	[SerializeField] float Period = 15.0f;
+	[SerializeField] float Period = 20.0f;
 	public float catRebirthTime = 5.0f;
 	[SerializeField] private Transform lookTarget ;
 	public AudioClip aclip;
@@ -53,7 +53,9 @@ public class CatMovment : MonoBehaviour {
 		if (Time.realtimeSinceStartup > teleNextPeriod) {
 			CatTeleport ();
 		}
-
+		if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) {
+			transform.Translate ((Vector3.forward) * 2f * Time.deltaTime);
+		}
 		//transform.LookAt(lookTarget); //look towards the player
 	}
 
@@ -65,17 +67,18 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.catLocation = moveList [p];
 		transform.eulerAngles = rotateList [p];
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
-		teleNextPeriod += Period;
+		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,5);
 		HiddenGameManager.Instance.holdVG = false;
 		Debug.Log ("Moving the cat to the "+p+" location ");
 	}
 
 
 	public void CatOnDesk(){
-		transform.position = new Vector3(41.33f, 4.5f, 36.7f);
+		transform.position = new Vector3(40.483f, 3.47f, 35.698f);
+		transform.eulerAngles = new Vector3 (0f, 180f, 0f);
 		audioSource1.Play();
 
-		teleNextPeriod = Time.realtimeSinceStartup + 0.1f;
+		teleNextPeriod = Time.realtimeSinceStartup + 1f;
 		HiddenGameManager.Instance.holdVG = true;
 	}
 
