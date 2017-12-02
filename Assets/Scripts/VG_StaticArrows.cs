@@ -5,7 +5,7 @@ namespace VRStandardAssets.Utils
 { 
     // This class fades in and out arrows which indicate to
     // the player which direction they should be facing.
-	public class StaticArrows : MonoBehaviour
+	public class VG_StaticArrows : MonoBehaviour
     {
 		public float angleDelta;
 
