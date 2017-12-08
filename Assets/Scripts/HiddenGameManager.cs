@@ -62,7 +62,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
-		WriteToFile ("\n A New Game");
+		WriteLineToTXT (" ");
+		WriteLineToTXT ("A New Game");
 
 	}
 
@@ -119,7 +120,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	
 		uiReportTime = catDeathTime - catBirthTime;
 		reportTimeList.Add (uiReportTime);
-		WriteToFile (string.Format("Shoot: "+reportTimeList.Count +" || Reaction time: "+uiReportTime));
+		WriteLineToTXT (string.Format("Shoot: "+reportTimeList.Count +" || Reaction time: "+uiReportTime));
 	}
 
 
@@ -153,7 +154,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		mean_UGTime = total_UGTime / reportTimeList.Count;
 	}
 
-	public static void WriteToFile(string text){
+	public static void WriteLineToTXT(string text){
 		string destination = Application.persistentDataPath + "/save.txt";
 		//FileStream file;
 		//if(File.Exists(destination)) file = File.OpenWrite(destination);
@@ -161,7 +162,6 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		StreamWriter writer = new StreamWriter (destination, true);
 		writer.WriteLine (text);
 		writer.Close ();
-		Debug.Log("Write file to "+destination);
 	}
 
 	private string GetThumbstickStatus(){
