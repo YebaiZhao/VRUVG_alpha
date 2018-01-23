@@ -62,6 +62,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
+		catScript.CatTeleport (9);
 		WriteLineToTXT (" ");
 		WriteLineToTXT ("A New Game");
 
@@ -110,7 +111,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		foreach (GameObject obj in inCatTags) {
 			obj.SetActive (true);
 		}
-		catScript.CatOnDesk ();
+		//catScript.CatOnDesk ();
 		catBirthTime = Time.realtimeSinceStartup;
 	}
 

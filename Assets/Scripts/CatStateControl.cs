@@ -1,6 +1,6 @@
 ﻿//Yebai Zhao 9/14/17
 //Manage the status of the cat
-
+/*
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,3 +39,5 @@ public class CatStateControl : MonoBehaviour {
 
 	}
 }
+
+*/
