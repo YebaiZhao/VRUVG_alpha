@@ -10,7 +10,8 @@ namespace VRStandardAssets.Utils
 		public float angleDelta;
 
         [SerializeField] private float m_FadeDuration = 0.1f;       // How long it takes for the arrows to appear and disappear.
-        [SerializeField] private float m_ShowAngle = 30f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
+        [SerializeField] private float m_ShowAngle = 30f;// How far from the desired facing direction the player must be facing for the arrows to appear.
+		[SerializeField] private float VGAlpha = -1f;
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
@@ -54,11 +55,11 @@ namespace VRStandardAssets.Utils
 				if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) { //within in -30 to 30
 					m_TargetAlpha = new float[]{0f, 0f, 0f};
 				} else if (angleDelta < -1*m_ShowAngle) { // smaller than -30
-					m_TargetAlpha = new float[]{1f, 0f, 1f};
+					m_TargetAlpha = new float[]{VGAlpha, 0f, VGAlpha};
 				} else if (m_ShowAngle < angleDelta) {   //lager than 30
-					m_TargetAlpha = new float[]{0f, 1f, 1f};
+					m_TargetAlpha = new float[]{0f, VGAlpha, VGAlpha};
 				} else {
-					m_TargetAlpha = new float[]{1f, 1f, 1f};
+					m_TargetAlpha = new float[]{VGAlpha, VGAlpha, VGAlpha};
 				}
 				for (int i = 0; i < m_ArrowRenderers.Length; i++)
 				{

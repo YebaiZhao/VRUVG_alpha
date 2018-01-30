@@ -9,7 +9,6 @@ public class CatMovment : MonoBehaviour {
 
 
 	[SerializeField] float Period = 20.0f;
-	public float catRebirthTime = 5.0f;
 	[SerializeField] private Transform lookTarget ;
 	public AudioClip aclip;
 	public AudioSource audioSource1;
@@ -60,10 +59,10 @@ public class CatMovment : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (Time.realtimeSinceStartup > teleNextPeriod) {
+		if (Time.realtimeSinceStartup > teleNextPeriod) { //Re tp the cat 
 			CatTeleport (Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count)));
 		}
-		if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) {
+		if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) { //Let the cat sneak through the desk
 			transform.Translate ((Vector3.forward) * 2f * Time.deltaTime);
 		}
 		//transform.LookAt(lookTarget); //look towards the player
@@ -76,9 +75,9 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.catLocation = moveList [p];
 		transform.eulerAngles = rotateList [p];
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
-		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,5);
+		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,10);
 		HiddenGameManager.Instance.holdVG = false;
-		Debug.Log ("Moving the cat to the "+p+" location ");
+		HiddenGameManager.WriteLineToTXT("Cat at point "+ p +".");
 	}
 
 

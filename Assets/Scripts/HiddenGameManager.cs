@@ -42,7 +42,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 	//Maintask
-	private float textChangeT = 12f;
+	private float textChangeT = 8f;
 	public float nextTextChangeTime = 0f;
 	public string currentColor = "";
 	public int playerScore = 0;
@@ -132,7 +132,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			changeText = true;
 			nextTextChangeTime += textChangeT;
 		}
-		if (scoredCube != "null") { //once scoredcube info is received
+		if (scoredCube != "null") { //once scored cube info is received
 
 
 			if (scoredCube == currentColor) {//correct
