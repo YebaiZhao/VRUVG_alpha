@@ -90,4 +90,8 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.holdVG = true;
 	}
 
+	public void CatRamdonTP(){
+		teleNextPeriod = Time.realtimeSinceStartup;
+	}
+
 }

@@ -6,6 +6,7 @@ public class LaserControll : MonoBehaviour {
 	public Transform weaponObject;
 	public AudioClip gunclip;
 	public AudioSource audioSource1;
+	private Particle laserparticle;
 	// Use this for initialization
 	void Start () {
 		audioSource1 = GetComponent<AudioSource> ();
@@ -23,6 +24,7 @@ public class LaserControll : MonoBehaviour {
 			audioSource1.Play (); ///play the gun shot
 
 			RaycastHit hit;
+
 			if (Physics.Raycast(weaponObject.position, weaponObject.forward, out hit)){
 				if(hit.collider.gameObject.CompareTag("Unique")){
 					hit.collider.gameObject.SetActive (false);
@@ -35,7 +37,10 @@ public class LaserControll : MonoBehaviour {
 					Debug.Log("Cat Deactived by laser");
 
 				}
+				laserparticle = GetComponentInChildren<Particle>();//Move it out of the if-hit
+				laserparticle.position = hit.point;
 			}
+
 		}
 	}
 }

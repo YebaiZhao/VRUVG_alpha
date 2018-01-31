@@ -112,6 +112,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			obj.SetActive (true);
 		}
 		//catScript.CatOnDesk ();
+		catScript.CatRamdonTP();
 		catBirthTime = Time.realtimeSinceStartup;
 	}
 
