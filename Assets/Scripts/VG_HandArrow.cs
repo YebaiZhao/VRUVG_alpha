@@ -16,9 +16,9 @@ public class VG_HandArrow : MonoBehaviour {
 
 
 		if (HiddenGameManager.Instance.catHide || HiddenGameManager.Instance.holdVG) {
-			rd.enabled = false;
+			rd.enabled = false;		//hide the arrow
 		} else {
-			rd.enabled = true;
+			rd.enabled = true;		//show the arrow
 		}
 	}
 }

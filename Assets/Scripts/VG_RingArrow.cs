@@ -10,14 +10,16 @@ namespace VRStandardAssets.Utils
 		public float angleDelta;
 
         [SerializeField] private float m_FadeDuration = 0.2f;       // How long it takes for the arrows to appear and disappear.
-        [SerializeField] private float m_ShowAngle = 30f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
-		[SerializeField] private float VGAlpha = -1f; 
+        [SerializeField] private float m_ShowAngle = 5f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
+		[SerializeField] private float VGMaxAlpha = -4f;
+		[SerializeField] private float VGMinAlpha = -0.5f;
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
 
         private float m_CurrentAlpha;                               // The alpha the arrows currently have.
         private float[] m_TargetAlpha;                              // The alpha the arrows are fading towards.
+		private float VGAlpha;
         private float m_FadeSpeed;                                  // How much the alpha should change per second (calculated from the fade duration).
 		private int angleSign;
         private const string k_MaterialPropertyName = "_Alpha";     // The name of the alpha property on the shader being used to fade the arrows.
@@ -29,8 +31,8 @@ namespace VRStandardAssets.Utils
 	    }
 
 
-        private void Update()
-        {	//Set the arrow ring to aling with camera.
+        private void Update() {	
+			//Set the arrow ring to aling with camera.
 			//transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
 			if (HiddenGameManager.Instance.catHide ||HiddenGameManager.Instance.holdVG) {//Cat is hiding
 				m_TargetAlpha = new float[]{ 0f, 0f };
@@ -41,6 +43,7 @@ namespace VRStandardAssets.Utils
 			} else { //Cat is showing
 				transform.position = m_Camera.position;
 				transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);// Refresh both posistion and rotation.
+				LiveAlpha();
 				Traceing ();
 			}
 
@@ -93,7 +96,10 @@ namespace VRStandardAssets.Utils
 				m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
 			}
 		}
-
+		private void LiveAlpha(){
+			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMaxAlpha)* Mathf.Abs(angleDelta)/ 180f;
+			
+		}
 
 		// Turn off the arrows entirely.
         public void Hide()

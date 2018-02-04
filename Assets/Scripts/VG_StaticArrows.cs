@@ -11,13 +11,15 @@ namespace VRStandardAssets.Utils
 
         [SerializeField] private float m_FadeDuration = 0.1f;       // How long it takes for the arrows to appear and disappear.
         [SerializeField] private float m_ShowAngle = 30f;// How far from the desired facing direction the player must be facing for the arrows to appear.
-		[SerializeField] private float VGAlpha = -1f;
+		[SerializeField] private float VGMaxAlpha = -2f;
+		[SerializeField] private float VGMinAlpha = -0.5f;
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
 
         private float m_CurrentAlpha;                               // The alpha the arrows currently have.
         private float[] m_TargetAlpha;                              // The alpha the arrows are fading towards.
+		private float VGAlpha;
         private float m_FadeSpeed;                                  // How much the alpha should change per second (calculated from the fade duration).
 		private int angleSign;
         private const string k_MaterialPropertyName = "_Alpha";     // The name of the alpha property on the shader being used to fade the arrows.
@@ -50,7 +52,7 @@ namespace VRStandardAssets.Utils
 				// The difference angle between the desired facing and the current facing of the player.
 				angleSign= Vector3.Cross(desiredForward, flatCamForward).y < 0 ? -1 : 1; //Just -1 or 1
 				angleDelta = angleSign*Vector3.Angle(desiredForward, flatCamForward);
-
+				LiveAlpha ();
 				// If the difference is greater than the angle at which the arrows are shown, their target alpha is one otherwise it is zero.
 				if (-1 * m_ShowAngle < angleDelta && angleDelta < m_ShowAngle) { //within in -30 to 30
 					m_TargetAlpha = new float[]{0f, 0f, 0f};
@@ -97,7 +99,10 @@ namespace VRStandardAssets.Utils
 //            }
       }
 
+		private void LiveAlpha(){
+			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMaxAlpha)* Mathf.Abs(angleDelta)/ 180f;
 
+		}
 		// Turn off the arrows entirely.
         public void Hide()
         {

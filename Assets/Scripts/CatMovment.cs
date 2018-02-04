@@ -77,7 +77,7 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
 		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,10);
 		HiddenGameManager.Instance.holdVG = false;
-		HiddenGameManager.WriteLineToTXT("Cat at point "+ p +".");
+		HiddenGameManager.Instance.WriteLineToTXT("Cat at point "+ p +".");
 	}
 
 

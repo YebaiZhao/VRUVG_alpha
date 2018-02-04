@@ -50,9 +50,10 @@ public class UpdateInstrBoard : MonoBehaviour {
 		int textPointer = (colorPointer + Random.Range (1, colorText.Length)) % colorText.Length;
 
 		HiddenGameManager.Instance.currentColor = colorText [textPointer];
-		m_text.SetText("Put a <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box. \n"
-			+"Your Score is: "+HiddenGameManager.Instance.playerScore);
+		m_text.SetText("Put a <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box.");
 		HiddenGameManager.Instance.changeText = false;
 	}
+
+
 
 }

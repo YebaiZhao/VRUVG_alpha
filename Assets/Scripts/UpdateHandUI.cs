@@ -30,6 +30,7 @@ public class UpdateHandUI : MonoBehaviour {
 			m_FpsNextPeriod += fpsMeasurePeriod;
 			fpslabel.text = string.Format("{0:F1} FPS", OVRPlugin.GetAppFramerate());
 
+
 			HiddenGameManager.Instance.CalulateReaction ();
 			string textB = "MRT: " + HiddenGameManager.Instance.mean_UGTime;
 			dataB.text = textB;

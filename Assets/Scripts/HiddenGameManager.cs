@@ -14,12 +14,24 @@ using System.IO;
 public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Time
 	private float _timeRemaining;
-	public float maxGameTime = 180; //seconds.
+	public float maxGameTime = 300; //seconds.
 	public float TimeRemaining//the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
 		set { _timeRemaining = value; }
 	}
+
+	//Data Writer
+	private static float[] dataArray = {0f,1f,2f,3f,4f,5f,6f,7f,8f,9f,10f,11f,12f};
+	private float nextCSVtime= 0f;
+	private float CSVperiod= 0.1f;
+	private Vector3 headToBorad;
+	public Vector3 headToCat;
+	private Vector3 boardposition;
+	private GameObject head;
+	private GameObject lefthand;
+	private GameObject righthand;
+	private string destination;
 
 	//Thumb
 	public string thumbstickStatus = "null";
@@ -61,10 +73,13 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
+		head = GameObject.FindGameObjectWithTag ("MainCamera");
+		lefthand = GameObject.FindGameObjectWithTag ("lefthand");
+		righthand = GameObject.FindGameObjectWithTag ("righthand");
+		boardposition =new Vector3 (40.856f, 4.716515f, 36.1156f);
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
-		catScript.CatTeleport (9);
-		WriteLineToTXT (" ");
-		WriteLineToTXT ("A New Game");
+		catScript.CatTeleport (9);//Cat start everytime at 9
+		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
 	}
 
@@ -79,12 +94,13 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		}
 
 		MainTaskMananger ();
-
+		WriteToCSV ();
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
 	}
+
 
 	/// <End of the Update>
 	/// //////////////////////////////////////////////////////////////////////
@@ -119,13 +135,10 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 	public void CountReactionTime(){
-	
 		uiReportTime = catDeathTime - catBirthTime;
 		reportTimeList.Add (uiReportTime);
 		WriteLineToTXT (string.Format("Shoot: "+reportTimeList.Count +" || Reaction time: "+uiReportTime));
 	}
-
-
 
 	public void MainTaskMananger(){
 
@@ -156,15 +169,50 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		mean_UGTime = total_UGTime / reportTimeList.Count;
 	}
 
-	public static void WriteLineToTXT(string text){
-		string destination = Application.persistentDataPath + "/save.txt";
+	public void WriteLineToTXT(string text){
+
 		//FileStream file;
 		//if(File.Exists(destination)) file = File.OpenWrite(destination);
 		//else file = File.Create(destination);
-		StreamWriter writer = new StreamWriter (destination, true);
+		StreamWriter writer = new StreamWriter (destination+"save.txt", true);
 		writer.WriteLine (text);
 		writer.Close ();
 	}
+	public static void WriteMessageToArray(int i, float message){
+		dataArray [i] = message;
+		dataArray [0] = Time.realtimeSinceStartup;
+	}
+	private void WriteToCSV(){
+	if(Time.realtimeSinceStartup>nextCSVtime){
+		WriteMessageToArray(1,head.transform.position.x);
+		WriteMessageToArray(2,head.transform.position.y);
+		WriteMessageToArray(3,head.transform.position.z);
+		WriteMessageToArray(4,lefthand.transform.position.x);
+		WriteMessageToArray(5,lefthand.transform.position.y);
+		WriteMessageToArray(6,lefthand.transform.position.z);
+		WriteMessageToArray(7,righthand.transform.position.x);
+		WriteMessageToArray(8,righthand.transform.position.y);
+		WriteMessageToArray(9,righthand.transform.position.z);
+
+		headToBorad = boardposition - head.transform.position;
+		headToCat = catLocation - head.transform.position;
+
+		WriteMessageToArray (10, Vector3.Angle (head.transform.forward, headToBorad));
+		WriteMessageToArray (11, Vector3.Angle (head.transform.forward, headToCat));
+
+		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);
+		string linetext = null;
+		foreach(float f in dataArray){
+			linetext = linetext + f+ ",";
+		}
+		datawriter.WriteLine (linetext);
+		datawriter.Close ();
+		nextCSVtime += CSVperiod;
+	}
+		
+
+}
+
 
 	private string GetThumbstickStatus(){
 		string status="null";
