@@ -100,7 +100,7 @@ namespace VRStandardAssets.Utils
       }
 
 		private void LiveAlpha(){
-			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMaxAlpha)* Mathf.Abs(angleDelta)/ 180f;
+			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMinAlpha)* Mathf.Abs(angleDelta)/ 180f;
 
 		}
 		// Turn off the arrows entirely.

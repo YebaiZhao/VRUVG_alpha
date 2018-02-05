@@ -94,11 +94,11 @@ namespace VRStandardAssets.Utils
 			for (int i = 0; i < m_ArrowRenderers.Length; i++)
 			{
 				m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
+
 			}
 		}
 		private void LiveAlpha(){
-			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMaxAlpha)* Mathf.Abs(angleDelta)/ 180f;
-			
+			VGAlpha = VGMinAlpha + (VGMaxAlpha -VGMinAlpha)* Mathf.Abs(angleDelta)/ 180f; //calculate what should be the alpha value displayed
 		}
 
 		// Turn off the arrows entirely.
