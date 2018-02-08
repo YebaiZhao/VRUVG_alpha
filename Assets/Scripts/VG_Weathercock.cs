@@ -15,7 +15,6 @@ public class VG_Weathercock : MonoBehaviour {
 		arrowRenders = GetComponentsInChildren<Renderer> ();
 		LookAtObjects = GameObject.FindGameObjectsWithTag ("LookAt");
 	}
-	
 	// Update is called once per frame
 	void Update () {
 		//transform.position = m_Camera.position;

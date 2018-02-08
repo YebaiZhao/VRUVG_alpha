@@ -9,7 +9,7 @@ public class EventControll : MonoBehaviour {
 	// Use this for initialization
 
 
-	void Start () {
+	void Awake () {
 		activeVisualSolutions (activeSolutions);
 	}
 	

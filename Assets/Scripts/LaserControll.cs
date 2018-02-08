@@ -28,12 +28,16 @@ public class LaserControll : MonoBehaviour {
 
 			if (HiddenGameManager.Instance.buttonStatus == "Index_Triggered") {
 				audioSource1.Play (); ///play the gun shot
+
+				if (HiddenGameManager.dataArray [15] == "NoTrigger" && !HiddenGameManager.Instance.catHide) {
+					HiddenGameManager.Instance.LogEvent (15, "Shoot!");
+				}
 				if (hit.collider.gameObject.CompareTag ("Unique")) {		// if this the cat
 					hit.collider.gameObject.SetActive (false);
 					laserparticle.Stop ();
 					//Destroy(hit.collider.gameObject); //kill the cat
 					HiddenGameManager.Instance.catDeathTime = Time.realtimeSinceStartup;
-					HiddenGameManager.Instance.CountReactionTime ();
+					HiddenGameManager.Instance.LogEvent (13, 14, 15, "NoCat", "CatDead", "NoTrigger");
 					HiddenGameManager.Instance.catHide = true;
 					//Debug.Log ("Cat Deactived by laser");
 

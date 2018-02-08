@@ -62,9 +62,9 @@ public class CatMovment : MonoBehaviour {
 		if (Time.realtimeSinceStartup > teleNextPeriod) { //Re tp the cat 
 			CatTeleport (Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count)));
 		}
-		if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) { //Let the cat sneak through the desk
-			transform.Translate ((Vector3.forward) * 2f * Time.deltaTime);
-		}
+		//if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) { //Let the cat sneak through the desk
+		//	transform.Translate ((Vector3.forward) * 2f * Time.deltaTime);
+		//}
 		//transform.LookAt(lookTarget); //look towards the player
 	}
 
@@ -77,18 +77,18 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
 		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,10);
 		HiddenGameManager.Instance.holdVG = false;
-		HiddenGameManager.Instance.WriteLineToTXT("Cat at point "+ p +".");
+		HiddenGameManager.Instance.LogEvent (13, 14,"Cat at "+p.ToString(), "CatTP");
 	}
 
 
-	public void CatOnDesk(){
+	/*public void CatOnDesk(){
 		transform.position = new Vector3(40.483f, 3.47f, 35.698f);
 		transform.eulerAngles = new Vector3 (0f, 180f, 0f);
 		audioSource1.Play();
 
 		teleNextPeriod = Time.realtimeSinceStartup + 1f;
 		HiddenGameManager.Instance.holdVG = true;
-	}
+	}*/
 
 	public void CatRamdonTP(){
 		teleNextPeriod = Time.realtimeSinceStartup;

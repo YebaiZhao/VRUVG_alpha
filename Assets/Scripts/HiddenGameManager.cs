@@ -22,7 +22,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	}
 
 	//Data Writer
-	private static float[] dataArray = {0f,1f,2f,3f,4f,5f,6f,7f,8f,9f,10f,11f,12f};
+	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
+		"HeadtoBorad","HeadtoCat","Score","CatLoc","Event","NoTrigger","IsCatVisible"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -77,9 +78,17 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		lefthand = GameObject.FindGameObjectWithTag ("lefthand");
 		righthand = GameObject.FindGameObjectWithTag ("righthand");
 		boardposition =new Vector3 (40.856f, 4.716515f, 36.1156f);
-		catScript = inCatTags[0].GetComponent<CatMovment> ();
-		catScript.CatTeleport (9);//Cat start everytime at 9
+
+
+
+		//Print the first line of the CSV
 		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+		LogToCSV ();
+
+		catScript = inCatTags[0].GetComponent<CatMovment> ();
+		//catScript.CatTeleport (9);//Cat start everytime at 9
+		inCatTags[0].SetActive( false);
+		catHide = true;
 
 	}
 
@@ -93,12 +102,20 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			catRebirth ();
 		}
 
+		if (Time.realtimeSinceStartup > nextCSVtime) {
+			LogData ();
+			LogToCSV ();
+			nextCSVtime += CSVperiod;
+		}
+
 		MainTaskMananger ();
-		WriteToCSV ();
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
+
+
+
 	}
 
 
@@ -130,6 +147,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		//catScript.CatOnDesk ();
 		catScript.CatRamdonTP();
 		catBirthTime = Time.realtimeSinceStartup;
+		LogEvent (13, 14, "WaitForTP", "CatRebrith");
 	}
 
 
@@ -137,7 +155,6 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public void CountReactionTime(){
 		uiReportTime = catDeathTime - catBirthTime;
 		reportTimeList.Add (uiReportTime);
-		WriteLineToTXT (string.Format("Shoot: "+reportTimeList.Count +" || Reaction time: "+uiReportTime));
 	}
 
 	public void MainTaskMananger(){
@@ -168,51 +185,66 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		}
 		mean_UGTime = total_UGTime / reportTimeList.Count;
 	}
-
-	public void WriteLineToTXT(string text){
-
-		//FileStream file;
-		//if(File.Exists(destination)) file = File.OpenWrite(destination);
-		//else file = File.Create(destination);
-		StreamWriter writer = new StreamWriter (destination+"save.txt", true);
-		writer.WriteLine (text);
-		writer.Close ();
-	}
-	public static void WriteMessageToArray(int i, float message){
+	
+	public void LogEvent(int i, string message){
 		dataArray [i] = message;
-		dataArray [0] = Time.realtimeSinceStartup;
+		dataArray [0] = Time.realtimeSinceStartup.ToString();
+		LogToCSV ();
 	}
-	private void WriteToCSV(){
-	if(Time.realtimeSinceStartup>nextCSVtime){
-		WriteMessageToArray(1,head.transform.position.x);
-		WriteMessageToArray(2,head.transform.position.y);
-		WriteMessageToArray(3,head.transform.position.z);
-		WriteMessageToArray(4,lefthand.transform.position.x);
-		WriteMessageToArray(5,lefthand.transform.position.y);
-		WriteMessageToArray(6,lefthand.transform.position.z);
-		WriteMessageToArray(7,righthand.transform.position.x);
-		WriteMessageToArray(8,righthand.transform.position.y);
-		WriteMessageToArray(9,righthand.transform.position.z);
-
+	public void LogEvent(int i, int p, string message1, string message2){
+		dataArray [i] = message1;
+		dataArray [p] = message2;
+		dataArray [0] = Time.realtimeSinceStartup.ToString();
+		LogToCSV ();
+	}
+	public void LogEvent(int i, int p, int q, string message1, string message2, string message3){
+		dataArray [i] = message1;
+		dataArray [p] = message2;
+		dataArray [q] = message3;
+		dataArray [0] = Time.realtimeSinceStartup.ToString();
+		LogToCSV ();
+	}
+		
+	private void LogData(){
+		dataArray [0] = Time.realtimeSinceStartup.ToString();
+		dataArray [1] = head.transform.position.x.ToString();
+		dataArray [2] = head.transform.position.y.ToString();
+		dataArray [3] = head.transform.position.z.ToString();
+		dataArray [4] = lefthand.transform.position.x.ToString();
+		dataArray [5] = lefthand.transform.position.y.ToString();
+		dataArray [6] = lefthand.transform.position.z.ToString();
+		dataArray [7] = righthand.transform.position.x.ToString();
+		dataArray [8] = righthand.transform.position.y.ToString();
+		dataArray [9] = righthand.transform.position.z.ToString();
 		headToBorad = boardposition - head.transform.position;
 		headToCat = catLocation - head.transform.position;
+		dataArray [10] = Vector3.Angle (head.transform.forward, headToBorad).ToString();
+		dataArray [11] = Vector3.Angle (head.transform.forward, headToCat).ToString();
+		dataArray [12] = playerScore.ToString();
+		dataArray [14] = "log";
 
-		WriteMessageToArray (10, Vector3.Angle (head.transform.forward, headToBorad));
-		WriteMessageToArray (11, Vector3.Angle (head.transform.forward, headToCat));
-
+	}
+	private void LogToCSV(){ //Every other reference should use the WriteMessageToArray method
 		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);
 		string linetext = null;
-		foreach(float f in dataArray){
-			linetext = linetext + f+ ",";
+
+		foreach (string f in dataArray) {
+			linetext = linetext + f + ",";
 		}
 		datawriter.WriteLine (linetext);
 		datawriter.Close ();
-		nextCSVtime += CSVperiod;
 	}
-		
+	/*private void WriteToCSV(){
+		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);
+		string linetext = null;
 
-}
-
+		foreach (string f in dataArray) {
+			linetext = linetext + f + ",";
+		}
+		datawriter.WriteLine (linetext);
+		datawriter.Close ();
+	}*/
+	
 
 	private string GetThumbstickStatus(){
 		string status="null";
