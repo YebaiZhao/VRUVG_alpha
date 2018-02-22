@@ -28,7 +28,7 @@ public class UpdateGameInfo : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		m_text.SetText ("Your Score is: "+HiddenGameManager.Instance.playerScore+"\n"+
+		m_text.SetText ("Score: "+HiddenGameManager.Instance.playerScore+"    "+
 			"Time left: " + FormatTime (HiddenGameManager.Instance.TimeRemaining));
 	}
 

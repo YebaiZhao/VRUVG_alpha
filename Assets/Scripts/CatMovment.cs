@@ -8,7 +8,7 @@ using UnityEngine;
 public class CatMovment : MonoBehaviour {
 
 
-	[SerializeField] float Period = 20.0f;
+	[SerializeField] float Period = 20.0f; //how long does the cat teleport again
 	[SerializeField] private Transform lookTarget ;
 	public AudioClip aclip;
 	public AudioSource audioSource1;
@@ -28,9 +28,9 @@ public class CatMovment : MonoBehaviour {
 		moveList.Add (new Vector3(42.101f, 5.513f, 44.098f));
 		moveList.Add (new Vector3(38.49f, 3.846f, 32.68f));
 		moveList.Add (new Vector3(32.96f, 3.17f, 31.18f));
-		moveList.Add (new Vector3(38.49f, 3.795f, 39.866f));//-new 4
-		moveList.Add (new Vector3(35.7071f, 2.412f, 25.066f));//-new 5
-		moveList.Add (new Vector3(49.2f, 3.921f, 42.334f));//-new 6
+		moveList.Add (new Vector3(38.49f, 3.795f, 39.866f));
+		moveList.Add (new Vector3(35.7071f, 2.412f, 25.066f));
+		moveList.Add (new Vector3(49.2f, 3.921f, 42.334f));
 		moveList.Add (new Vector3(45.156f, 3.068f, 28.307f));
 		moveList.Add (new Vector3(47.575f, 7.074f, 41.151f));
 		moveList.Add (new Vector3(41.11f, 3.557f, 38.7f));//9
@@ -38,7 +38,7 @@ public class CatMovment : MonoBehaviour {
 		moveList.Add (new Vector3(49.89f, 3.278f, 30.57f));
 		moveList.Add (new Vector3(45.32f, 3.55f, 34.21f));
 		moveList.Add (new Vector3(45.32f, 3.754f, 39.49f));
-		moveList.Add (new Vector3(37.52f, 4.333f, 44.184f));
+		moveList.Add (new Vector3(37.52f, 4.333f, 44.184f));//14
 		//Rotate list of 15
 		rotateList.Add(new Vector3(-4.028f, 52.091f, 0.132f));//0
 		rotateList.Add(new Vector3(-16.744f, 202.13f, -9.543f));
@@ -77,7 +77,7 @@ public class CatMovment : MonoBehaviour {
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
 		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,10);
 		HiddenGameManager.Instance.holdVG = false;
-		HiddenGameManager.Instance.LogEvent (13, 14,"Cat at "+p.ToString(), "CatTP");
+		HiddenGameManager.Instance.LogEvent (13, 14, p.ToString(), "CatTP");
 	}
 
 

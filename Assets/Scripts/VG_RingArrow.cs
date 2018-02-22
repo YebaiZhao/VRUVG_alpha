@@ -16,6 +16,7 @@ namespace VRStandardAssets.Utils
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
         [SerializeField] private Transform m_Camera;                // Reference to the camera to determine which way the player is facing.
         [SerializeField] private Renderer[] m_ArrowRenderers;       // Reference to the renderers of the arrows used to fade them in and out.
+		[SerializeField] private bool sticktoHead = false;
 
         private float m_CurrentAlpha;                               // The alpha the arrows currently have.
         private float[] m_TargetAlpha;                              // The alpha the arrows are fading towards.
@@ -33,7 +34,7 @@ namespace VRStandardAssets.Utils
 
         private void Update() {	
 			//Set the arrow ring to aling with camera.
-			//transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
+
 			if (HiddenGameManager.Instance.catHide ||HiddenGameManager.Instance.holdVG) {//Cat is hiding
 				m_TargetAlpha = new float[]{ 0f, 0f };
 				for (int i = 0; i < m_ArrowRenderers.Length; i++)
@@ -41,8 +42,9 @@ namespace VRStandardAssets.Utils
 					m_ArrowRenderers[i].material.SetFloat(k_MaterialPropertyName, m_TargetAlpha[i]);
 				}
 			} else { //Cat is showing
-				transform.position = m_Camera.position;
-				transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);// Refresh both posistion and rotation.
+				if(sticktoHead) transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
+				//transform.position = m_Camera.position;
+				//transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);// Refresh both posistion and rotation.
 				LiveAlpha();
 				Traceing ();
 			}

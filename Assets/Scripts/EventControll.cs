@@ -27,7 +27,7 @@ public class EventControll : MonoBehaviour {
 			if (solutionObjectArray!=null) {
 				for (int k = 0; k < solutionObjectArray.Length; k++) {
 					solutionObjectArray [k].SetActive (activearray [i]);
-					Debug.Log ("Set " + tag + " to " + activearray [i]);
+					//Debug.Log ("Set " + tag + " to " + activearray [i]);
 				}
 		
 			} else {

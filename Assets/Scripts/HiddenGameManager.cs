@@ -23,7 +23,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 	//Data Writer
 	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
-		"HeadtoBorad","HeadtoCat","Score","CatLoc","Event","NoTrigger","IsCatVisible"};
+		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
+		"Text","Cube","Bonus"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -36,11 +37,10 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 	//Thumb
 	public string thumbstickStatus = "null";
-	public string buttonStatus = "null";
 	//Cat
 	//Is the cat regenalbe
 	public bool catHide = false;// if the laser in controller hit the cat
-	public float catHideTime = 10f;
+	public float catHideTime = 15f;
 	public float catTeleportTime = 0f;
 	public float catBirthTime =0f;
 	public float catDeathTime = 0f;
@@ -55,12 +55,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 	//Maintask
-	private float textChangeT = 8f;
-	public float nextTextChangeTime = 0f;
-	public string currentColor = "";
 	public int playerScore = 0;
-	public bool changeText = true;
-	public string scoredCube="null";
 	public Vector3 cubeHome = new Vector3(41.29f, 4.52f, 35.9f);
 
 
@@ -69,6 +64,12 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public float total_UGTime = 0f;
 	public float mean_UGTime = 0f;
 
+	void Awake(){
+		//Print the first line of the CSV
+		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+		LogToCSV ();
+		dataArray [13] = "";
+	}
 
 	void Start () {
 
@@ -78,12 +79,6 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		lefthand = GameObject.FindGameObjectWithTag ("lefthand");
 		righthand = GameObject.FindGameObjectWithTag ("righthand");
 		boardposition =new Vector3 (40.856f, 4.716515f, 36.1156f);
-
-
-
-		//Print the first line of the CSV
-		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
-		LogToCSV ();
 
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
 		//catScript.CatTeleport (9);//Cat start everytime at 9
@@ -95,10 +90,11 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	// Update is called once per frame
 	void Update () {
 		TimeRemaining -= Time.deltaTime;
-		thumbstickStatus = GetThumbstickStatus();
-		buttonStatus = GetButtonStatus ();
 
-		if ((Time.realtimeSinceStartup - catDeathTime) > catHideTime && catHide == true) {
+		//thumbstickStatus = GetThumbstickStatus(); - obseloete
+
+
+		if ((Time.realtimeSinceStartup - catDeathTime) > catHideTime+Random.Range(0,10) && catHide == true) {
 			catRebirth ();
 		}
 
@@ -107,8 +103,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			LogToCSV ();
 			nextCSVtime += CSVperiod;
 		}
-
-		MainTaskMananger ();
+			
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
@@ -157,26 +152,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		reportTimeList.Add (uiReportTime);
 	}
 
-	public void MainTaskMananger(){
 
-		if (Time.realtimeSinceStartup >nextTextChangeTime) { //update the text every 8sec
-			changeText = true;
-			nextTextChangeTime += textChangeT;
-		}
-		if (scoredCube != "null") { //once scored cube info is received
-
-
-			if (scoredCube == currentColor) {//correct
-				playerScore += 100;
-				changeText = true;
-			} else { //incorrect 
-				playerScore -= 200;
-				changeText = true;
-			}
-			nextTextChangeTime = Time.realtimeSinceStartup + textChangeT;
-			scoredCube = "null";
-		}
-	}
 
 	public void CalulateReaction(){
 		total_UGTime = 0f;
@@ -204,7 +180,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		dataArray [0] = Time.realtimeSinceStartup.ToString();
 		LogToCSV ();
 	}
-		
+	
 	private void LogData(){
 		dataArray [0] = Time.realtimeSinceStartup.ToString();
 		dataArray [1] = head.transform.position.x.ToString();
@@ -221,8 +197,12 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		dataArray [10] = Vector3.Angle (head.transform.forward, headToBorad).ToString();
 		dataArray [11] = Vector3.Angle (head.transform.forward, headToCat).ToString();
 		dataArray [12] = playerScore.ToString();
-		dataArray [14] = "log";
-
+		dataArray [14] = "";
+		dataArray [15] = OVRInput.Get (OVRInput.Button.PrimaryIndexTrigger)? "true":"";
+		dataArray [16] = OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)? "true":"";
+		dataArray [17] = OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)? "true":"";
+		dataArray [18] = OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)? "true":"";
+		dataArray [21] = "";
 	}
 	private void LogToCSV(){ //Every other reference should use the WriteMessageToArray method
 		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);
@@ -266,13 +246,37 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		if(OVRInput.Get (OVRInput.Button.SecondaryThumbstickUp)) { status="R_up"; }
 		return status;
 	}
-
-	private string GetButtonStatus(){/// Currently both index fingers will trigger the keyword
+	private string GetTriggerStatus(){/// Currently both index fingers will trigger the keyword
 		string status = "null";
-		if (OVRInput.Get (OVRInput.Button.PrimaryIndexTrigger)) {status = "Index_Triggered";}
-		if (OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)) {status = "Index_Triggered";}
+		if (OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)) {status = "RH_Trigger";}
 		return status;
 	}
+	private string GetGrabberStatus(){/// Currently both index fingers will trigger the keyword
+	int l = OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)? 1:0;
+	int	r =	OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)? 2:0;	
+		/*string status = "null";
+	if (OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)) {status = "LH_Grabbing";}
+	if (OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)) {status = "RH_Grabbing";}
+	if (OVRInput.Get (OVRInput.Button.SecondaryHandTrigger) && OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)) {
+		status = "BH_Grabbing";
+	}
+	return status;*/
+	switch(l+r){
+			case 0:
+				return "null";
 
+			case 1:
+				return "LH_Grabb";
+
+			case 2:
+				return "RH_Grabb";
+
+			case 3:
+				return "BH_Grabb";
+
+			default:
+				return "null";
+		}
+	}
 
 }

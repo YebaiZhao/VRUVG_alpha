@@ -9,11 +9,13 @@ public class LaserControll : MonoBehaviour {
 	public AudioSource audioSource1;
 	private RaycastHit hit;
 	private ParticleSystem laserparticle;
+	public delegate void LaserCatEvent();
+	public static event LaserCatEvent LaserHitCat;
+
 	// Use this for initialization
 	void Start () {
 		audioSource1 = GetComponent<AudioSource> ();
 		audioSource1.clip = gunclip;
-
 		laserparticle = GetComponentInChildren<ParticleSystem>();
 
 	}
@@ -21,23 +23,21 @@ public class LaserControll : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		LaserFunction ();
+
 	}
 	private void LaserFunction(){
 		//Ray debug = new Ray (weaponObject.position, weaponObject.forward);
 		if (Physics.Raycast (weaponObject.position, weaponObject.forward, out hit)) {
-
-			if (HiddenGameManager.Instance.buttonStatus == "Index_Triggered") {
+			if (HiddenGameManager.dataArray[15]=="true" ||HiddenGameManager.dataArray[16]=="true") {
 				audioSource1.Play (); ///play the gun shot
-
-				if (HiddenGameManager.dataArray [15] == "NoTrigger" && !HiddenGameManager.Instance.catHide) {
-					HiddenGameManager.Instance.LogEvent (15, "Shoot!");
-				}
 				if (hit.collider.gameObject.CompareTag ("Unique")) {		// if this the cat
 					hit.collider.gameObject.SetActive (false);
 					laserparticle.Stop ();
-					//Destroy(hit.collider.gameObject); //kill the cat
+					if (LaserHitCat != null) {
+						LaserHitCat ();
+					}
 					HiddenGameManager.Instance.catDeathTime = Time.realtimeSinceStartup;
-					HiddenGameManager.Instance.LogEvent (13, 14, 15, "NoCat", "CatDead", "NoTrigger");
+					HiddenGameManager.Instance.LogEvent (13, 14, "", "CatDead");
 					HiddenGameManager.Instance.catHide = true;
 					//Debug.Log ("Cat Deactived by laser");
 
@@ -55,6 +55,8 @@ public class LaserControll : MonoBehaviour {
 					laserparticle.Stop ();//if is't not far
 				}
 	
+			} else {
+				laserparticle.Stop ();
 			}
 
 		}
