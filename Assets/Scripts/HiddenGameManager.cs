@@ -24,7 +24,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Data Writer
 	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
 		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
-		"Text","Cube","Bonus"};
+		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -64,15 +64,15 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public float total_UGTime = 0f;
 	public float mean_UGTime = 0f;
 
-	void Awake(){
-		//Print the first line of the CSV
+
+
+	void Start () {
 		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 		LogToCSV ();
 		dataArray [13] = "";
-	}
-
-	void Start () {
-
+		dataArray [23] = "";
+		dataArray [24] = "";
+		dataArray [25] = "";
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		head = GameObject.FindGameObjectWithTag ("MainCamera");
@@ -211,6 +211,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		foreach (string f in dataArray) {
 			linetext = linetext + f + ",";
 		}
+		linetext = linetext.Remove (linetext.Length - 1);
 		datawriter.WriteLine (linetext);
 		datawriter.Close ();
 	}

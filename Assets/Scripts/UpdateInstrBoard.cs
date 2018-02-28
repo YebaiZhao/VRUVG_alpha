@@ -12,8 +12,8 @@ public class UpdateInstrBoard : MonoBehaviour {
 	private TMP_Text m_text;
 	[SerializeField] string[] visualColor = {"2374B8","00B000","9818E5","E73D3D","E7E727"};
 	[SerializeField] string[] colorText = {"blue cube","green cube","purple cube","red cube","yellow cube"}; 
-	[SerializeField] int[] bonusArray = {-20, -10, 10, 10, 20, 20, 30, 50};
-	[SerializeField] int[] bonusCatArray = {-50, -30, -20, -10, -10, 10, 20, 30};
+	[SerializeField] int[] bonusArray = {-10, 10, 0, 10, 10, 20, 30, 50, 80, 130};//Fibonacci numbers F-2 to F7
+	[SerializeField] int[] bonusCatArray = {130, -80, 50, -30, 20, -10, 10, 0, 10, 10};//Fibonacci numbers F-7 to F2
 	[SerializeField] int catBonus = 0;
 	[SerializeField] float bonusPeriod = 10f;
 	private int colorPointer;
@@ -53,7 +53,7 @@ public class UpdateInstrBoard : MonoBehaviour {
 		// Load a new font asset and assign it to the text object.
 		m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Roboto-Bold SDF");
 		m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/Roboto-Bold SDF - Surface");// Load a new material preset which was created with the context menu duplicate.
-		m_text.fontSize = 1f;
+		m_text.fontSize = 1.2f;
 		m_text.autoSizeTextContainer = true;
 		// Set the text
 		m_text.text = "A simple line of text.";

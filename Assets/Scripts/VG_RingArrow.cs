@@ -10,7 +10,7 @@ namespace VRStandardAssets.Utils
 		public float angleDelta;
 
         [SerializeField] private float m_FadeDuration = 0.2f;       // How long it takes for the arrows to appear and disappear.
-        [SerializeField] private float m_ShowAngle = 5f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
+        [SerializeField] private float m_ShowAngle = 15f;           // How far from the desired facing direction the player must be facing for the arrows to appear.
 		[SerializeField] private float VGMaxAlpha = -4f;
 		[SerializeField] private float VGMinAlpha = -0.5f;
 		[SerializeField] private Transform m_DesiredLocation;      // Indicates which direction the player should be facing (uses world space forward if null).
@@ -43,7 +43,7 @@ namespace VRStandardAssets.Utils
 				}
 			} else { //Cat is showing
 				if(sticktoHead) transform.SetPositionAndRotation(m_Camera.position, m_Camera.rotation);  //stick to head
-				//transform.position = m_Camera.position;
+				transform.position = m_Camera.position;
 				//transform.eulerAngles = new Vector3(0, m_Camera.eulerAngles.y, 0);// Refresh both posistion and rotation.
 				LiveAlpha();
 				Traceing ();

@@ -27,7 +27,8 @@ public class LaserControll : MonoBehaviour {
 	}
 	private void LaserFunction(){
 		//Ray debug = new Ray (weaponObject.position, weaponObject.forward);
-		if (Physics.Raycast (weaponObject.position, weaponObject.forward, out hit)) {
+		if (Physics.Raycast (weaponObject.position, weaponObject.forward, out hit)) {//constantly shooting raycast
+			
 			if (HiddenGameManager.dataArray[15]=="true" ||HiddenGameManager.dataArray[16]=="true") {
 				audioSource1.Play (); ///play the gun shot
 				if (hit.collider.gameObject.CompareTag ("Unique")) {		// if this the cat
@@ -38,6 +39,9 @@ public class LaserControll : MonoBehaviour {
 					}
 					HiddenGameManager.Instance.catDeathTime = Time.realtimeSinceStartup;
 					HiddenGameManager.Instance.LogEvent (13, 14, "", "CatDead");
+					HiddenGameManager.dataArray [23] = "";
+					HiddenGameManager.dataArray [24] = "";
+					HiddenGameManager.dataArray [25] = "";
 					HiddenGameManager.Instance.catHide = true;
 					//Debug.Log ("Cat Deactived by laser");
 
