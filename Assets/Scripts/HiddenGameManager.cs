@@ -24,7 +24,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Data Writer
 	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
 		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
-		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ"};
+		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -48,7 +48,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public Vector3 catLocation ;
 	private GameObject[] inCatTags;
 	private CatMovment catScript;
-
+	private string[] catTypeArray = {"CubeTaker", "Good Cat", "ScoreTaker","ScoreGiver"};
 	//UI
 	public bool holdVG = false;
 
@@ -64,7 +64,12 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	public float total_UGTime = 0f;
 	public float mean_UGTime = 0f;
 
-
+	void OnEnable(){//subscribe event
+		LaserControll.LaserHitCat += CatDeath;
+	}
+	void OnDisable(){
+		LaserControll.LaserHitCat -= CatDeath;
+	}
 
 	void Start () {
 		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -73,6 +78,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		dataArray [23] = "";
 		dataArray [24] = "";
 		dataArray [25] = "";
+		dataArray [26] = "";
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		head = GameObject.FindGameObjectWithTag ("MainCamera");
@@ -95,7 +101,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 		if ((Time.realtimeSinceStartup - catDeathTime) > catHideTime+Random.Range(0,10) && catHide == true) {
-			catRebirth ();
+			CatRebirth ();
 		}
 
 		if (Time.realtimeSinceStartup > nextCSVtime) {
@@ -109,18 +115,14 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			Application.Quit();
 		}
 
-
-
 	}
 
 
-	/// <End of the Update>
-	/// //////////////////////////////////////////////////////////////////////
-	/// </summary>
-	/// <returns>The thumbstick status.</returns>
-	/// 
-	/// 
-	/// 
+	// <End of the Update>
+	/////////////////////////////////////////////////////////////////////////
+	// </summary>
+	// <returns>The thumbstick status.</returns>
+
 	/*public static float GaussianDistr(float mean, float stdDev){
 		//Random rand = new Random(); //reuse this if you are generating many
 		float u1 = 1.0-Random.value; //uniform(0,1] random doubles
@@ -134,7 +136,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 
-	public void catRebirth(){
+	public void CatRebirth(){
 		catHide = false;
 		foreach (GameObject obj in inCatTags) {
 			obj.SetActive (true);
@@ -142,15 +144,27 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		//catScript.CatOnDesk ();
 		catScript.CatRamdonTP();
 		catBirthTime = Time.realtimeSinceStartup;
+		dataArray [26] = catTypeArray [Random.Range (0, catTypeArray.Length)];//
 		LogEvent (13, 14, "WaitForTP", "CatRebrith");
 	}
 
 
 
-	public void CountReactionTime(){
-		uiReportTime = catDeathTime - catBirthTime;
-		reportTimeList.Add (uiReportTime);
-	}
+	private void CatDeath(){
+		catDeathTime = Time.realtimeSinceStartup;
+		if (dataArray [26] == "ScoreTaker") {
+			playerScore += Mathf.RoundToInt (500/(catDeathTime - catBirthTime+10)-50);
+
+		} else if (dataArray [26] == "ScoreGiver") {
+			playerScore += Mathf.RoundToInt (500/(catDeathTime - catBirthTime+10)+50);
+		}
+		LogEvent (13, 14, "", "CatDead");
+		dataArray [23] = "";
+		dataArray [24] = "";
+		dataArray [25] = "";
+		dataArray [26] = "";
+		catHide = true;
+}
 
 
 
@@ -195,7 +209,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		headToBorad = boardposition - head.transform.position;
 		headToCat = catLocation - head.transform.position;
 		dataArray [10] = Vector3.Angle (head.transform.forward, headToBorad).ToString();
-		dataArray [11] = Vector3.Angle (head.transform.forward, headToCat).ToString();
+		dataArray [11] = catHide? "":Vector3.Angle (head.transform.forward, headToCat).ToString();
 		dataArray [12] = playerScore.ToString();
 		dataArray [14] = "";
 		dataArray [15] = OVRInput.Get (OVRInput.Button.PrimaryIndexTrigger)? "true":"";

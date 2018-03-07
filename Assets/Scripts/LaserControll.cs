@@ -37,13 +37,6 @@ public class LaserControll : MonoBehaviour {
 					if (LaserHitCat != null) {
 						LaserHitCat ();
 					}
-					HiddenGameManager.Instance.catDeathTime = Time.realtimeSinceStartup;
-					HiddenGameManager.Instance.LogEvent (13, 14, "", "CatDead");
-					HiddenGameManager.dataArray [23] = "";
-					HiddenGameManager.dataArray [24] = "";
-					HiddenGameManager.dataArray [25] = "";
-					HiddenGameManager.Instance.catHide = true;
-					//Debug.Log ("Cat Deactived by laser");
 
 				}//else doing nothing
 

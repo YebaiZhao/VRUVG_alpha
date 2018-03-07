@@ -12,9 +12,8 @@ public class UpdateInstrBoard : MonoBehaviour {
 	private TMP_Text m_text;
 	[SerializeField] string[] visualColor = {"2374B8","00B000","9818E5","E73D3D","E7E727"};
 	[SerializeField] string[] colorText = {"blue cube","green cube","purple cube","red cube","yellow cube"}; 
-	[SerializeField] int[] bonusArray = {-10, 10, 0, 10, 10, 20, 30, 50, 80, 130};//Fibonacci numbers F-2 to F7
-	[SerializeField] int[] bonusCatArray = {130, -80, 50, -30, 20, -10, 10, 0, 10, 10};//Fibonacci numbers F-7 to F2
-	[SerializeField] int catBonus = 0;
+	[SerializeField] int[] bonusArray = {-30, 20, -10, 10, 0, 10, 10, 20, 30, 50, 80, 130};//Fibonacci numbers F-4 to F7
+	//[SerializeField] int[] bonusCatArray = {130, -80, 50, -30, 20, -10, 10, 0, 10, 10};//Fibonacci numbers F-7 to F2
 	[SerializeField] float bonusPeriod = 10f;
 	private int colorPointer;
 	private int textPointer;
@@ -28,11 +27,9 @@ public class UpdateInstrBoard : MonoBehaviour {
 
 	void OnEnable(){//subscribe event
 		BoxDetection.OnCubeEnter += ChangeColorText;
-		LaserControll.LaserHitCat += AddCatBonus;
 	}
 	void OnDisable(){
 		BoxDetection.OnCubeEnter -= ChangeColorText;
-		LaserControll.LaserHitCat -= AddCatBonus;
 	}
 
 
@@ -68,15 +65,14 @@ public class UpdateInstrBoard : MonoBehaviour {
 
 
 	void Update(){
-		m_text.SetText("Put a <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color> in the wood box \n" +
-			"to get the bonus of " + bonus+"  "+countdown);
+		m_text.SetText("Find a <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color>  \n" +
+			"Bonus: <size=120%>" + bonus+"</size>   "+countdown);
 		
 		countIn10 =Mathf.CeilToInt ((nextChangeBonus - Time.realtimeSinceStartup) / bonusPeriod * 10f);
 		ChangeCountDown (countIn10);
 	}
 
 	private void ChangeCountDown(int i){
-		
 		switch (i) {
 		case 10:
 			countdown = "==========";
@@ -119,18 +115,18 @@ public class UpdateInstrBoard : MonoBehaviour {
 
 
 	private void ChangeBonus(){
-		if (HiddenGameManager.Instance.catHide) {
+		/*if (HiddenGameManager.Instance.catHide) {
 			bonus = bonusArray [Random.Range (0, bonusArray.Length)];
 			nextChangeBonus += bonusPeriod;
 		} else {
 			bonus = bonusCatArray [Random.Range (0, bonusCatArray.Length)];
 			nextChangeBonus += bonusPeriod;
-		}
+		}*/
+		bonus = bonusArray [Random.Range (0, bonusArray.Length)];
+		nextChangeBonus += bonusPeriod;
 		HiddenGameManager.dataArray[22] = bonus.ToString();
 	}
-	private void AddCatBonus(){
-		HiddenGameManager.Instance.playerScore += catBonus;
-	}
+
 	private void ChangeColorText(string scoredCube){
 
 		if (scoredCube != "null") { //once scored cube info is received

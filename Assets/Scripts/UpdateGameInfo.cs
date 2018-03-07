@@ -29,17 +29,19 @@ public class UpdateGameInfo : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		m_text.SetText ("Score: "+HiddenGameManager.Instance.playerScore+"        "+
+		m_text.SetText ("Score: <size=200%>"+HiddenGameManager.Instance.playerScore+"    </size>    "+
 			"Time: " + FormatTimetoPBar (HiddenGameManager.Instance.TimeRemaining));
 	}
 	private string FormatTimetoPBar(float timeInSeconds){
-		int barCount = Mathf.RoundToInt( HiddenGameManager.Instance.TimeRemaining / HiddenGameManager.Instance.maxGameTime*50);
-		string bar = new string ('|', barCount);
-		string emptybar = new string('|', (50-barCount));
-
-		bar = "<#00ff37>"+bar+"</color>"+"<#dd0000>"+emptybar+"</color>";
-
-		return bar;
+		if (HiddenGameManager.Instance.TimeRemaining > 0) {
+			int barCount = Mathf.RoundToInt( HiddenGameManager.Instance.TimeRemaining / HiddenGameManager.Instance.maxGameTime*50);
+			string bar = new string ('|', barCount);
+			string emptybar = new string('|', (50-barCount));
+			bar = "<#00ff37>"+bar+"</color>"+"<#dd0000>"+emptybar+"</color>";
+			return bar;
+		}
+		else 
+			return "Time UP";
 	}
 	private string FormatTime(float timeInSeconds){
 		return string.Format("{0}:{1:00}'", Mathf.FloorToInt(timeInSeconds/60), Mathf.FloorToInt(timeInSeconds % 60));

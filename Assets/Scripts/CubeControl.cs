@@ -17,14 +17,16 @@ public class CubeControl : MonoBehaviour {
 		if(Time.realtimeSinceStartup >teleNextPeriod){
 			//do nothing at home
 			if (!CheckRange (myhome)) {//if not at home
-				if (HiddenGameManager.Instance.catHide) {//but cat is hiding
+				if (HiddenGameManager.Instance.catHide ) {//but cat is hiding
 					GoHome ();
 				}
-				else {//cat is coming
-					if (imInTheBox) {
-						GoToCat ();
-					}
+				else if (imInTheBox && (HiddenGameManager.dataArray[26]!="CubeTaker")){
+					GoHome ();
 				}
+				else if (imInTheBox && (HiddenGameManager.dataArray[26]=="CubeTaker")) {
+						GoToCat ();
+				}
+				
 			}
 
 			teleNextPeriod += telePeriod;
