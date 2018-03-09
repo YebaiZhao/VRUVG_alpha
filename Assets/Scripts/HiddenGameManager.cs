@@ -24,7 +24,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Data Writer
 	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
 		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
-		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType"};
+		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType","ForwardX","ForwardY","ForwardZ"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -217,6 +217,9 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		dataArray [17] = OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)? "true":"";
 		dataArray [18] = OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)? "true":"";
 		dataArray [21] = "";
+		dataArray [23] = head.transform.forward.x.ToString ();
+		dataArray [24] = head.transform.forward.y.ToString ();
+		dataArray [25] = head.transform.forward.z.ToString ();
 	}
 	private void LogToCSV(){ //Every other reference should use the WriteMessageToArray method
 		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);
