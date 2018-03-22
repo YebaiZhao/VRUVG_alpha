@@ -22,9 +22,9 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	}
 
 	//Data Writer
-	public static string[] dataArray = {"Timestamp","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
+	public static string[] dataArray = {"Time","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
 		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
-		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType","ForwardX","ForwardY","ForwardZ"};
+		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType","ForwardX","ForwardY","ForwardZ","VGType"};
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -49,6 +49,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	private GameObject[] inCatTags;
 	private CatMovment catScript;
 	private string[] catTypeArray = {"CubeTaker", "Good Cat", "ScoreTaker","ScoreGiver"};
+	private float teleNextPeriod = 0f;
 	//UI
 	public bool holdVG = false;
 
@@ -71,14 +72,14 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		LaserControll.LaserHitCat -= CatDeath;
 	}
 
-	void Start () {
+	public override void Awake(){
 		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 		LogToCSV ();
 		dataArray [13] = "";
-		dataArray [23] = "";
-		dataArray [24] = "";
-		dataArray [25] = "";
 		dataArray [26] = "";
+	}
+	void Start () {
+
 		TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		head = GameObject.FindGameObjectWithTag ("MainCamera");
@@ -88,9 +89,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
 		//catScript.CatTeleport (9);//Cat start everytime at 9
-		inCatTags[0].SetActive( false);
+		inCatTags[0].SetActive(false);
 		catHide = true;
-
 	}
 
 	// Update is called once per frame
@@ -109,7 +109,11 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			LogToCSV ();
 			nextCSVtime += CSVperiod;
 		}
-			
+
+		if (Time.realtimeSinceStartup > teleNextPeriod ) { //Re tp the cat 
+			catScript.CatTeleport ();
+			teleNextPeriod = teleNextPeriod+ 20.0f + Random.Range(-5,10);
+		}	
 
 		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
@@ -145,7 +149,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		catScript.CatRamdonTP();
 		catBirthTime = Time.realtimeSinceStartup;
 		dataArray [26] = catTypeArray [Random.Range (0, catTypeArray.Length)];//
-		LogEvent (13, 14, "WaitForTP", "CatRebrith");
+		LogEvent (13, 14, "WaitForTP", "CatRebirth");
 	}
 
 
@@ -159,10 +163,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			playerScore += Mathf.RoundToInt (500/(catDeathTime - catBirthTime+10)+50);
 		}
 		LogEvent (13, 14, "", "CatDead");
-		dataArray [23] = "";
-		dataArray [24] = "";
-		dataArray [25] = "";
-		dataArray [26] = "";
+		dataArray [26] = "";//tpye
 		catHide = true;
 }
 
@@ -217,9 +218,12 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		dataArray [17] = OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)? "true":"";
 		dataArray [18] = OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)? "true":"";
 		dataArray [21] = "";
-		dataArray [23] = head.transform.forward.x.ToString ();
-		dataArray [24] = head.transform.forward.y.ToString ();
-		dataArray [25] = head.transform.forward.z.ToString ();
+		dataArray [23] = catHide ? "" : catLocation.x.ToString ();
+        dataArray [24] = catHide ? "" : catLocation.y.ToString();
+        dataArray [25] = catHide ? "" : catLocation.z.ToString();
+        dataArray [27] = head.transform.forward.x.ToString ();
+		dataArray [28] = head.transform.forward.y.ToString ();
+		dataArray [29] = head.transform.forward.z.ToString ();
 	}
 	private void LogToCSV(){ //Every other reference should use the WriteMessageToArray method
 		StreamWriter datawriter = new StreamWriter (destination + "data.csv", true);

@@ -14,7 +14,7 @@ public class CatMovment : MonoBehaviour {
 	public AudioSource audioSource1;
 
 //	private float startingY;
-	private float teleNextPeriod = 0;
+	private float teleNextPeriod = -0.3f;
 	private List<Vector3> moveList = new List<Vector3>();
 	private List<Vector3> rotateList = new List<Vector3>();
 	// Use this for initialization
@@ -59,9 +59,9 @@ public class CatMovment : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (Time.realtimeSinceStartup > teleNextPeriod) { //Re tp the cat 
-			CatTeleport (Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count)));
-		}
+		//if (Time.realtimeSinceStartup > teleNextPeriod) { //Re tp the cat 
+		//	CatTeleport ();
+		//}
 		//if (Time.time < teleNextPeriod && HiddenGameManager.Instance.holdVG) { //Let the cat sneak through the desk
 		//	transform.Translate ((Vector3.forward) * 2f * Time.deltaTime);
 		//}
@@ -70,12 +70,12 @@ public class CatMovment : MonoBehaviour {
 
 
 
-	public void CatTeleport(int p){
+	public void CatTeleport(){
+		int p =Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
 		transform.position = moveList[p];
 		HiddenGameManager.Instance.catLocation = moveList [p];
 		transform.eulerAngles = rotateList [p];
 		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
-		teleNextPeriod = teleNextPeriod+ Period + Random.Range(-5,10);
 		HiddenGameManager.Instance.holdVG = false;
 		HiddenGameManager.dataArray [23] = moveList [p].x.ToString();
 		HiddenGameManager.dataArray [24] = moveList [p].y.ToString ();
