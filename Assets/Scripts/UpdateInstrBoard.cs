@@ -14,7 +14,7 @@ public class UpdateInstrBoard : MonoBehaviour {
 	[SerializeField] string[] colorText = {"blue cube","green cube","purple cube","red cube","yellow cube"}; 
 	[SerializeField] int[] bonusArray = {-30, 20, -10, 10, 0, 10, 10, 20, 30, 50, 80, 130};//Fibonacci numbers F-4 to F7
 	//[SerializeField] int[] bonusCatArray = {130, -80, 50, -30, 20, -10, 10, 0, 10, 10};//Fibonacci numbers F-7 to F2
-	[SerializeField] float bonusPeriod = 10f;
+	[SerializeField] float bonusPeriod = 20f;
 	private int colorPointer;
 	private int textPointer;
 	private int bonus;
@@ -27,9 +27,11 @@ public class UpdateInstrBoard : MonoBehaviour {
 
 	void OnEnable(){//subscribe event
 		BoxDetection.OnCubeEnter += ChangeColorText;
+		HiddenGameManager.DysonClean += Hide;
 	}
 	void OnDisable(){
 		BoxDetection.OnCubeEnter -= ChangeColorText;
+		HiddenGameManager.DysonClean -= Hide;
 	}
 
 
@@ -50,7 +52,7 @@ public class UpdateInstrBoard : MonoBehaviour {
 		// Load a new font asset and assign it to the text object.
 		m_text.font = Resources.Load<TMP_FontAsset>("Fonts & Materials/Roboto-Bold SDF");
 		m_text.fontSharedMaterial = Resources.Load<Material>("Fonts & Materials/Roboto-Bold SDF - Surface");// Load a new material preset which was created with the context menu duplicate.
-		m_text.fontSize = 1.2f;
+		m_text.fontSize = 1f;
 		m_text.autoSizeTextContainer = true;
 		// Set the text
 		m_text.text = "A simple line of text.";
@@ -65,8 +67,8 @@ public class UpdateInstrBoard : MonoBehaviour {
 
 
 	void Update(){
-		m_text.SetText("Find a <#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color>  \n" +
-			"Bonus: <size=120%>" + bonus+"</size>   "+countdown);
+		m_text.SetText("Find a    <size=150%><#" + visualColor[colorPointer] + ">"+ colorText[textPointer]+"</color></size>\n" +
+			"Bonus    <size=150%>" + bonus+"</size>   "+countdown);
 		
 		countIn10 =Mathf.CeilToInt ((nextChangeBonus - Time.realtimeSinceStartup) / bonusPeriod * 10f);
 		ChangeCountDown (countIn10);
@@ -150,5 +152,7 @@ public class UpdateInstrBoard : MonoBehaviour {
 		HiddenGameManager.dataArray[20] = colorText [textPointer].Remove(colorText [textPointer].Length -5);
 		HiddenGameManager.dataArray[19] = colorText [colorPointer].Remove(colorText [colorPointer].Length -5);
 	}
-
+	private void Hide(string message){
+		gameObject.SetActive (false);
+	}
 }

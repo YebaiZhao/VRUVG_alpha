@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class CatMovment : MonoBehaviour {
 
-
-	[SerializeField] float Period = 20.0f; //how long does the cat teleport again
 	[SerializeField] private Transform lookTarget ;
 	public AudioClip aclip;
 	public AudioSource audioSource1;
@@ -72,6 +70,18 @@ public class CatMovment : MonoBehaviour {
 
 	public void CatTeleport(){
 		int p =Random.Range (0, Mathf.Min(moveList.Count, rotateList.Count));
+		transform.position = moveList[p];
+		HiddenGameManager.Instance.catLocation = moveList [p];
+		transform.eulerAngles = rotateList [p];
+		HiddenGameManager.Instance.catTeleportTime = Time.realtimeSinceStartup;//Tell the GM that the cat has relocated
+		HiddenGameManager.Instance.holdVG = false;
+		HiddenGameManager.dataArray [23] = moveList [p].x.ToString();
+		HiddenGameManager.dataArray [24] = moveList [p].y.ToString ();
+		HiddenGameManager.dataArray [25] = moveList [p].z.ToString ();
+		HiddenGameManager.Instance.LogEvent (13, 14, p.ToString(), "CatTP");
+
+	}
+	public void CatTeleport(int p){
 		transform.position = moveList[p];
 		HiddenGameManager.Instance.catLocation = moveList [p];
 		transform.eulerAngles = rotateList [p];

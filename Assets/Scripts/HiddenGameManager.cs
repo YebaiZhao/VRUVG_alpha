@@ -12,19 +12,23 @@ using UnityEngine;
 using System.IO;
 
 public class HiddenGameManager : Singleton<HiddenGameManager> {
-	//Time
-	private float _timeRemaining;
-	public float maxGameTime = 300; //seconds.
-	public float TimeRemaining//the time remaining from the begining of the game in sec.
+	public delegate void HGMEvent(string tag);
+	public static event HGMEvent DysonClean;
+	private bool sessionLive = true;
+	/*Time
+	//private float _timeRemaining;
+	//public float maxGameTime = 300; //seconds.
+	//public float TimeRemaining//the time remaining from the begining of the game in sec.
 	{
 		get { return _timeRemaining; }
 		set { _timeRemaining = value; }
-	}
+	}*/
 
 	//Data Writer
-	public static string[] dataArray = {"Time","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",
-		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", 
-		"Text","Cube","Bonus","CatX" ,"CatY" ,"CatZ","CatType","ForwardX","ForwardY","ForwardZ","VGType"};
+	public static string[] dataArray = {
+		"Time","HeadX","HeadY","HeadZ","LHandX","LHandY","LHandZ","RHandX","RHandY","RHandZ",//0~9
+		"HeadtoBoard","HeadtoCat","Score","CatLoc","CatEvent","LHTrigger","LRTrigger","LHGrabb","RHGrabb", "TColor", //10~19
+		"Text","CubeEntered","Bonus","CatX" ,"CatY" ,"CatZ","CatType","ForwardX","ForwardY","ForwardZ","VGType"};//20~30
 	private float nextCSVtime= 0f;
 	private float CSVperiod= 0.1f;
 	private Vector3 headToBorad;
@@ -38,9 +42,9 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	//Thumb
 	public string thumbstickStatus = "null";
 	//Cat
-	//Is the cat regenalbe
-	public bool catHide = false;// if the laser in controller hit the cat
-	public float catHideTime = 15f;
+	public bool catHide = false;// if the cat is hiding or not
+	public float catMinHideTime = 10f;//The cat will at least hide for this time after shoot.
+	public float catHidingFor = 20f;//Each time cat will hide for different length
 	public float catTeleportTime = 0f;
 	public float catBirthTime =0f;
 	public float catDeathTime = 0f;
@@ -49,9 +53,22 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	private GameObject[] inCatTags;
 	private CatMovment catScript;
 	private string[] catTypeArray = {"CubeTaker", "Good Cat", "ScoreTaker","ScoreGiver"};
-	private float teleNextPeriod = 0f;
+	//private float teleNextPeriod = 0f;
+	private int[][] randomMatrix ={//Each array in the matrix contains 0~14, onec the VG selected, the Cat will TP in that certain sequence 
+		new int[]{14,5,12,11,4,6,2,1,13,10,0,7,3,9,8},
+		new int[]{6,12,5,9,4,2,3,11,1,8,7,10,14,0,13},
+		new int[]{9,7,4,2,8,6,12,5,14,13,11,3,10,1,0},
+		new int[]{11,14,10,9,7,2,6,0,1,3,4,12,13,5,8},
+		new int[]{3,2,7,10,6,13,5,0,8,9,11,4,14,12,1},
+		new int[]{8,3,14,10,6,1,4,5,7,0,13,9,11,2,12},
+		new int[]{6,10,1,11,0,7,13,12,4,5,3,2,8,14,9},
+		new int[]{13,2,1,12,5,9,8,11,14,6,4,7,0,3,10}
+	};
+	private int catKilledtimes = 0;
+
+
 	//UI
-	public bool holdVG = false;
+	public bool holdVG = false;//Dont show visual guidance when true
 
 
 
@@ -71,7 +88,11 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	void OnDisable(){
 		LaserControll.LaserHitCat -= CatDeath;
 	}
-
+	/// <Vars>
+	/// 
+	/// /////////////////////////////////////////////////////////////////////////////////////
+	/// 
+	/// </Main sequence>
 	public override void Awake(){
 		destination = Application.persistentDataPath +"/"+System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 		LogToCSV ();
@@ -80,7 +101,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	}
 	void Start () {
 
-		TimeRemaining = maxGameTime;
+		//TimeRemaining = maxGameTime;
 		inCatTags = GameObject.FindGameObjectsWithTag ("Unique");////It cant catch inactive objs, so put in Start()
 		head = GameObject.FindGameObjectWithTag ("MainCamera");
 		lefthand = GameObject.FindGameObjectWithTag ("lefthand");
@@ -88,19 +109,25 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		boardposition =new Vector3 (40.856f, 4.716515f, 36.1156f);
 
 		catScript = inCatTags[0].GetComponent<CatMovment> ();
-		//catScript.CatTeleport (9);//Cat start everytime at 9
 		inCatTags[0].SetActive(false);
 		catHide = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		TimeRemaining -= Time.deltaTime;
+		//TimeRemaining -= Time.deltaTime;
 
 		//thumbstickStatus = GetThumbstickStatus(); - obseloete
 
+		if (catKilledtimes == 15) {
+			if (DysonClean != null) {
+				DysonClean ("Session Ended");
+			}//the end of the world ass we know it
+			sessionLive = false;
+			catKilledtimes = 0;
+		}
 
-		if ((Time.realtimeSinceStartup - catDeathTime) > catHideTime+Random.Range(0,10) && catHide == true) {
+		if ((Time.realtimeSinceStartup - catDeathTime) > catHidingFor && catHide && sessionLive) {
 			CatRebirth ();
 		}
 
@@ -110,14 +137,15 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			nextCSVtime += CSVperiod;
 		}
 
-		if (Time.realtimeSinceStartup > teleNextPeriod ) { //Re tp the cat 
+		/*if (Time.realtimeSinceStartup > teleNextPeriod && !catHide ) { // After certain amount of time the cat will TP again
 			catScript.CatTeleport ();
 			teleNextPeriod = teleNextPeriod+ 20.0f + Random.Range(-5,10);
-		}	
+		}	*/
 
-		if(TimeRemaining<=0 || Input.GetKey("escape")){ // quit game under these circumstances
+		if(Input.GetKey("escape")){ // quit game under these circumstances
 			Application.Quit();
 		}
+
 
 	}
 
@@ -141,15 +169,21 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 
 
 	public void CatRebirth(){
-		catHide = false;
-		foreach (GameObject obj in inCatTags) {
-			obj.SetActive (true);
-		}
-		//catScript.CatOnDesk ();
-		catScript.CatRamdonTP();
-		catBirthTime = Time.realtimeSinceStartup;
-		dataArray [26] = catTypeArray [Random.Range (0, catTypeArray.Length)];//
-		LogEvent (13, 14, "WaitForTP", "CatRebirth");
+		int i;
+		if (int.TryParse (dataArray [30], out i)) {
+			catHide = false;
+			foreach (GameObject obj in inCatTags) {
+				obj.SetActive (true);
+			}
+			//catScript.CatOnDesk ();
+			catScript.CatTeleport(randomMatrix[i] [catKilledtimes] );
+			catBirthTime = Time.realtimeSinceStartup;
+			//teleNextPeriod = catBirthTime;
+			dataArray [26] = catTypeArray [Random.Range (0, catTypeArray.Length)];//
+			LogEvent (13, 14, "WaitForTP", "CatRebirth");
+		}else Debug.Log("Fail to get the cat resurrected");
+
+
 	}
 
 
@@ -165,6 +199,8 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 		LogEvent (13, 14, "", "CatDead");
 		dataArray [26] = "";//tpye
 		catHide = true;
+		catHidingFor = catMinHideTime + Random.Range (0, 10);
+		catKilledtimes++;
 }
 
 
@@ -197,27 +233,27 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 	}
 	
 	private void LogData(){
-		dataArray [0] = Time.realtimeSinceStartup.ToString();
-		dataArray [1] = head.transform.position.x.ToString();
-		dataArray [2] = head.transform.position.y.ToString();
-		dataArray [3] = head.transform.position.z.ToString();
-		dataArray [4] = lefthand.transform.position.x.ToString();
-		dataArray [5] = lefthand.transform.position.y.ToString();
-		dataArray [6] = lefthand.transform.position.z.ToString();
-		dataArray [7] = righthand.transform.position.x.ToString();
-		dataArray [8] = righthand.transform.position.y.ToString();
-		dataArray [9] = righthand.transform.position.z.ToString();
-		headToBorad = boardposition - head.transform.position;
-		headToCat = catLocation - head.transform.position;
-		dataArray [10] = Vector3.Angle (head.transform.forward, headToBorad).ToString();
-		dataArray [11] = catHide? "":Vector3.Angle (head.transform.forward, headToCat).ToString();
-		dataArray [12] = playerScore.ToString();
-		dataArray [14] = "";
+		dataArray [0] = Time.realtimeSinceStartup.ToString();//Time
+		dataArray [1] = head.transform.position.x.ToString();//Headx
+		dataArray [2] = head.transform.position.y.ToString();//Heady
+		dataArray [3] = head.transform.position.z.ToString();//HeadZ
+		dataArray [4] = lefthand.transform.position.x.ToString();//LhandX
+		dataArray [5] = lefthand.transform.position.y.ToString();//LhandY
+		dataArray [6] = lefthand.transform.position.z.ToString();//LhandZ
+		dataArray [7] = righthand.transform.position.x.ToString();//RhandX
+		dataArray [8] = righthand.transform.position.y.ToString();//RhandY
+		dataArray [9] = righthand.transform.position.z.ToString();//RhandZ
+		headToBorad = boardposition - head.transform.position;//calulating 
+		headToCat = catLocation - head.transform.position;//
+		dataArray [10] = Vector3.Angle (head.transform.forward, headToBorad).ToString();//Headtoborad
+		dataArray [11] = catHide? "":Vector3.Angle (head.transform.forward, headToCat).ToString();//Headtocat
+		dataArray [12] = playerScore.ToString();//score
+		dataArray [14] = "";//Catevent
 		dataArray [15] = OVRInput.Get (OVRInput.Button.PrimaryIndexTrigger)? "true":"";
 		dataArray [16] = OVRInput.Get (OVRInput.Button.SecondaryIndexTrigger)? "true":"";
 		dataArray [17] = OVRInput.Get (OVRInput.Button.PrimaryHandTrigger)? "true":"";
 		dataArray [18] = OVRInput.Get (OVRInput.Button.SecondaryHandTrigger)? "true":"";
-		dataArray [21] = "";
+		dataArray [21] = "";//Cube
 		dataArray [23] = catHide ? "" : catLocation.x.ToString ();
         dataArray [24] = catHide ? "" : catLocation.y.ToString();
         dataArray [25] = catHide ? "" : catLocation.z.ToString();

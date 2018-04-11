@@ -21,7 +21,7 @@ public class UpdateHandUI : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		timerlabel.text = FormatTime (HiddenGameManager.Instance.TimeRemaining);//time to the end of the game
+		//timerlabel.text = FormatTime (HiddenGameManager.Instance.TimeRemaining);//time to the end of the game
 		//dataC.text = HiddenGameManager.Instance.buttonStatus;//button
 		dataA.text = FormatTime(HiddenGameManager.Instance.uiReportTime);//cat reaction time
 

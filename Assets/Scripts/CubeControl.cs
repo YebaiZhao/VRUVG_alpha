@@ -8,6 +8,18 @@ public class CubeControl : MonoBehaviour {
 	private Vector3 myhome;
 	private bool imInTheBox = false;
 	// Use this for initialization
+
+
+
+
+	void OnEnable(){//subscribe event
+		HiddenGameManager.DysonClean += HideMyself;
+	}
+	void OnDisable(){
+		HiddenGameManager.DysonClean -= HideMyself;
+	}
+
+
 	void Start () {
 		myhome = HiddenGameManager.Instance.cubeHome;
 	}
@@ -56,5 +68,7 @@ public class CubeControl : MonoBehaviour {
 	public void GoToCat(){
 		transform.position = (HiddenGameManager.Instance.catLocation + new Vector3 (Random.Range (-0.3f, 0.3f), 0.3f, Random.Range (-0.3f, 0.3f)));
 	}
-
+	private void HideMyself(string message){
+		GetComponent<Renderer> ().enabled = false;
+	}
 }

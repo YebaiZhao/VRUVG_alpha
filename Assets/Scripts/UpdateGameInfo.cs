@@ -8,7 +8,14 @@ public class UpdateGameInfo : MonoBehaviour {
 
 	public objectType ObjectType;
 	private TMP_Text m_text;
-
+	private float gameTime;
+	private bool gameover=false;
+	void OnEnable(){//subscribe event
+		HiddenGameManager.DysonClean += EndGame;
+	}
+	void OnDisable(){
+		HiddenGameManager.DysonClean -= EndGame;
+	}
 	// Use this for initialization
 	void Awake () {
 		if (ObjectType == 0)
@@ -26,13 +33,17 @@ public class UpdateGameInfo : MonoBehaviour {
 		m_text.enableWordWrapping = false;
 		m_text.alignment = TextAlignmentOptions.Left;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		m_text.SetText ("Score: <size=200%>"+HiddenGameManager.Instance.playerScore+"    </size>    "+
-			"Time: " + FormatTimetoPBar (HiddenGameManager.Instance.TimeRemaining));
+		m_text.SetText ("Score    <size=200%>"+HiddenGameManager.Instance.playerScore+"    </size>\n"+
+			"Time    " + FormatTime(gameTime));
+		if (!gameover) {
+			gameTime = Time.realtimeSinceStartup;
+		} else {
+		}
 	}
-	private string FormatTimetoPBar(float timeInSeconds){
+	/*private string FormatTimetoPBar(float timeInSeconds){
 		if (HiddenGameManager.Instance.TimeRemaining > 0) {
 			int barCount = Mathf.RoundToInt( HiddenGameManager.Instance.TimeRemaining / HiddenGameManager.Instance.maxGameTime*50);
 			string bar = new string ('|', barCount);
@@ -42,8 +53,11 @@ public class UpdateGameInfo : MonoBehaviour {
 		}
 		else 
 			return "Time UP";
-	}
+	}*/
 	private string FormatTime(float timeInSeconds){
 		return string.Format("{0}:{1:00}'", Mathf.FloorToInt(timeInSeconds/60), Mathf.FloorToInt(timeInSeconds % 60));
+	}
+	private void EndGame(string message){
+		gameover = true;
 	}
 }
