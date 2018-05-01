@@ -180,7 +180,7 @@ public class HiddenGameManager : Singleton<HiddenGameManager> {
 			catBirthTime = Time.realtimeSinceStartup;
 			//teleNextPeriod = catBirthTime;
 			dataArray [26] = catTypeArray [Random.Range (0, catTypeArray.Length)];//
-			LogEvent (13, 14, "WaitForTP", "CatRebirth");
+			LogEvent (14, "CatRebirth");
 		}else Debug.Log("Fail to get the cat resurrected");
 
 
