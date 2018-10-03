@@ -1,6 +1,10 @@
 # INSTRUCTIONS
 This is Yebai Zhao. The developer of this game.
 
+## Important! Data Collection 
+
+The game is made for my Master HCI study, it collects your motion and button pressing data in CSV files everytime it runs. These files will be saved LOCALLY at C:\Users\[username]\AppData\LocalLow\FETLAB RIT\VR User Visual Guidance . You can read them, ignore them, delete them, whatever, but I will be glad if you can send them to my email at yz9422@rit.edu. Please rename the file to match the game number you were playing, since the CSV file doesn't keep that record in itself.
+
 ## Download
 
 [Game One](https://github.com/YebaiZhao/VRUVG_alpha/blob/master/FinalBuilds/OffScreenIndicator.zip)
