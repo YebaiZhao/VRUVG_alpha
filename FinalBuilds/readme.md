@@ -1,7 +1,7 @@
 # INSTRUCTIONS
 This is Yebai Zhao. The developer of this game.
 
-##Download
+## Download
 
 [Game One](https://github.com/YebaiZhao/VRUVG_alpha/blob/master/FinalBuilds/OffScreenIndicator.zip)
 
